@@ -1,6 +1,4 @@
 
-import Tubby from "./tubby"
-import * as tubbyModule from "./tubby"
+import * as tubby from "./tubby"
 
-window["Tubby"] = Tubby
-window["tubbyModule"] = tubbyModule
+window["tubby"] = tubby

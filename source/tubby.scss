@@ -90,7 +90,6 @@ html.tubby {
 
 			cursor: pointer;
 			outline: 1px solid transparent;
-			transition: outline-color linear 250ms;
 			&:hover, &:focus {
 				outline-color: skyblue;
 			}

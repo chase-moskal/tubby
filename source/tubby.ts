@@ -1,185 +1,198 @@
 
 /**
- * TUBBY OPTIONS
+ * Options common to all requests to the youtube api
  */
-export interface TubbyOptions {
-
-	/** GOOGLE API KEY */
-	youtubeApiKey: string
+export interface CommonRequestOptions {
+	apiKey: string
+	apiEndpoint?: string
+	fetchParams?: RequestInit
 }
 
 /**
- * TUBBY VIDEO
- * - represents a single youtube video
+ * Default options for all youtube api requests
  */
-export interface TubbyVideo {
-	youtubeVideoId: string
-	title: string
-	description: string
-	cover: string
-}
-
-/**
- * TUBBY
- * - youtube api helper
- */
-export default class Tubby {
-	private readonly youtubeApiUrl: string = "https://www.googleapis.com/youtube/v3/"
-	private readonly paginationLimit: number = 50
-	private readonly fetchParams: RequestInit = {
+export const defaultRequestOptions: Partial<CommonRequestOptions> = {
+	apiEndpoint: "https://www.googleapis.com/youtube/v3/",
+	fetchParams: {
 		method: "GET",
 		mode: "cors",
 		cache: "default",
 		redirect: "follow",
 		credentials: "omit"
 	}
+}
 
-	private readonly youtubeApiKey: string
+/**
+ * Encode an object as url query string parameters
+ * - you know, like "?key=value&alpha=beta"
+ */
+function encodeQueryParams(data: {[key: string]: any}): string {
+	let subject = ""
+	let first = true
+	for (const key of Object.keys(data)) {
+		const separator = first ? "?" : "&"
+		subject += `${separator}${key}=${data[key]}`
+		first = false
+	}
+	return subject
+}
 
-	/**
-	 * CONSTRUCTOR FOR 'TUBBY' YOUTUBE API HELPER
-	 * - provide the google api key to get started
-	 */
-	constructor({youtubeApiKey}: TubbyOptions) {
-		this.youtubeApiKey = youtubeApiKey
+/**
+ * Response from the youtube api
+ */
+export type YoutubeResponse = any
+
+/**
+ * Options for a generic request to the youtube api
+ * - provide your own resource and data
+ */
+export interface RequestOptions extends CommonRequestOptions {
+	resource: string
+	data: any
+}
+
+/**
+ * Make a call to the youtube api
+ */
+export async function request(opts: RequestOptions): Promise<YoutubeResponse> {
+	const options = {...defaultRequestOptions, ...opts}
+	let {apiKey, apiEndpoint, fetchParams, resource, data} = options
+	if (!apiKey) throw new Error("missing param 'apiKey' is required")
+
+	// ensure api key is properly set in data
+	data = {...data}
+	if (data.key) throw new Error("api key must not be provided in the data object")
+	data.key = apiKey
+
+	// construct the final url
+	const url = apiEndpoint + resource + encodeQueryParams(data)
+
+	// execute the request and gather the json response
+	const response = await (await fetch(url, fetchParams)).json()
+
+	// throw any reported errors
+	if (response.error) {
+		throw new Error(`Error ${response.error.code}: ${response.error.message}`)
 	}
 
-	/**
-	 * ENCODE DATA
-	 * - encode a javascript object as an HTTP 'get' data string
-	 */
-	private encodeData(data: {[key: string]: any}): string {
-		let subject = ""
-		let first = true
-		for (const key of Object.keys(data)) {
-			const separator = first ? "?" : "&"
-			subject += `${separator}${key}=${data[key]}`
-			first = false
+	// return the youtube response
+	return response;
+}
+
+/**
+ * Youtube video
+ */
+export interface Video {
+	videoId: string
+	title: string
+	description: string
+	thumbs: {
+		small: string
+		medium: string
+	}
+}
+
+/**
+ * Get the id of the 'uploads' playlist which contains all the videos
+ */
+export async function getChannelUploadsPlaylistId(opts: CommonRequestOptions & {channelId: string}): Promise<string> {
+	const {channelId, ...options} = opts
+	const response = await request({
+		...options,
+		resource: "channels",
+		data: {id: channelId, part: "contentDetails"}
+	})
+	return response.items[0].contentDetails.relatedPlaylists.uploads
+}
+
+/**
+ * Get all videos of a playlist ('upload' playlist is a list of all videos)
+ * - sequentially read all paginated videos — *every single one of them*
+ * - it can take awhile, i found a quarter second per round trip — 50 videos per trip
+ * - you can render videos as they load realtime by providing an 'onVideosReceived' callback
+ */
+export async function getAllVideos(
+	opts: CommonRequestOptions & {
+		playlistId: string;
+		paginationLimit?: number
+		data?: any;
+		onVideosReceived?: (videos: Video[]) => void
+	}
+): Promise<Video[]> {
+	const {playlistId, data: moreData, onVideosReceived, paginationLimit = 50, ...options} = opts
+	
+	let allVideos: Video[] = []
+	let nextPageToken: string
+	let go: boolean = true
+
+	// loop over every page to receive all results
+	while (go) {
+
+		// prepare youtube api request data, to get the videos
+		const data: any = {
+			part: "snippet",
+			playlistId,
+			maxResults: paginationLimit,
+			...moreData
 		}
-		return subject
-	}
 
-	/**
-	 * DIGEST RESPONSE ITEMS AS VIDEOS
-	 * - simplify youtube api responses
-	 */
-	private digestResponseItemsAsVideos(items: any[]): TubbyVideo[] {
-		return items.map(item => ({
-			youtubeVideoId: item.snippet.resourceId.videoId,
+		// add the page token, if available
+		if (nextPageToken) data.pageToken = nextPageToken
+
+		// query youtube for page of video results
+		const response = await request({
+			resource: "playlistItems",
+			data,
+			...options
+		})
+
+		// extract videos from the response
+		const newVideos = response.items.map((item): Video => ({
+			videoId: item.snippet.resourceId.videoId,
 			title: item.snippet.title,
 			description: item.snippet.description,
-			cover: item.snippet.thumbnails.default.url
-		}))
-	}
-
-	/**
-	 * REQUEST
-	 * - make a request to the youtube v3 api
-	 */
-	async request(resource, data): Promise<any> {
-
-		// ensure api key is properly set in data
-		data = {...data}
-		if (data.key) throw new Error("api key must be provided only once")
-		data.key = this.youtubeApiKey
-
-		// construct the endpoint url
-		let endpoint = this.youtubeApiUrl + resource + this.encodeData(data)
-
-		// execute the request and gather the json response
-		const response = await (await fetch(endpoint, this.fetchParams)).json()
-
-		// throw any reported errors
-		if (response.error) {
-			throw new Error(`Error ${response.error.code}: ${response.error.message}`)
-		}
-
-		return response;
-	}
-
-	/**
-	 * GET CHANNEL UPLOADS PLAYLIST ID
-	 * - get the id of the 'uploads' playlist which contains all the videos
-	 */
-	async getChannelUploadsPlaylistId(youtubeChannelId: string): Promise<string> {
-		const response = await this.request("channels", {part: "contentDetails", id: youtubeChannelId})
-		return response.items[0].contentDetails.relatedPlaylists.uploads
-	}
-
-	/**
-	 * GET ALL VIDEOS
-	 * - get all videos of a particular channel or playlist
-	 * - sequentially read all paginated videos — *every single one of them*
-	 * - it takes a awhile, i found a quarter second per round trip — 50 videos per trip
-	 * - you can render videos as they load realtime by providing an 'onVideosReceived' callback
-	 */
-	async getAllVideos(options: GetAllVideosEfficientOptions | GetAllVideosRetardedOptions): Promise<TubbyVideo[]> {
-		const roptions: GetAllVideosRetardedOptions = <any>options
-		const eoptions: GetAllVideosEfficientOptions = <any>options
-
-		// obtain the 'uploads' playlist id
-		const youtubePlaylistId = !eoptions.youtubePlaylistId
-			? await this.getChannelUploadsPlaylistId(roptions.youtubeChannelId)
-				.then(id => {
-					if (!options.silent)
-						console.warn(`'tubby.getAllVideos' would be faster if `
-							+ `supplied {youtubePlaylistId: "${id}"} instead of `
-							+ `{youtubeChannelId} — it would save a roundtrip — `
-							+ `pass {silent: true} to remove this message`)
-					return id
-				})
-			: eoptions.youtubePlaylistId
-
-		let videos: TubbyVideo[] = []
-		let nextPageToken: string
-		let go: boolean = true
-
-		// loop to receive all of the videos, despite pagination
-		while (go) {
-
-			// prepare youtube api request data, to get the videos
-			const data: any = {
-				part: "snippet",
-				playlistId: youtubePlaylistId,
-				maxResults: this.paginationLimit,
-				...options.moreData
+			thumbs: {
+				small: item.snippet.thumbnails.default.url,
+				medium: item.snippet.thumbnails.medium.url
 			}
+		}))
 
-			// add the page token, if available
-			if (nextPageToken) data.pageToken = nextPageToken
+		// fire realtime 'onVideosReceived' callback
+		if (onVideosReceived) onVideosReceived(newVideos)
 
-			// query youtube for page of video results
-			const response = await this.request("playlistItems", data)
-			const newVideos = this.digestResponseItemsAsVideos(response.items)
+		// add to videos list
+		allVideos = [...allVideos, ...newVideos]
 
-			// fire realtime 'onVideosReceived' callback
-			if (options.onVideosReceived) options.onVideosReceived(newVideos)
+		// queue up the next page of video results
+		nextPageToken = response.nextPageToken
 
-			// add to videos list
-			videos = [...videos, ...newVideos]
-
-			// queue up the next page of video results
-			nextPageToken = response.nextPageToken
-
-			// we're done when there are no more pages
-			if (!nextPageToken) go = false
-		}
-
-		// return all of the gathered videos
-		return videos
+		// we're done when there are no more pages
+		if (!nextPageToken) go = false
 	}
+
+	// return all of the gathered videos
+	return allVideos
 }
 
-export interface GetAllVideosCommonOptions {
-	moreData?: any
-	onVideosReceived?: (videos: TubbyVideo[]) => void
-	silent?: boolean
-}
+/**
+ * Return all of a channel's videos
+ * - same as getAllVideos, but with an extra round trip to find
+ *   the 'uploads' playlist
+ * - you should just use getAllVideos instead
+ * - this exists for supremely lazy people
+ */
+export async function getAllVideosForChannel(
+	opts: CommonRequestOptions & {
+		channelId: string;
+		paginationLimit?: number
+		onVideosReceived?: (videos: Video[]) => void
+	}
+): Promise<Video[]> {
+	const {channelId, onVideosReceived, paginationLimit, ...options} = opts
 
-export interface GetAllVideosEfficientOptions extends GetAllVideosCommonOptions {
-	youtubePlaylistId: string
-}
+	// fetch the 'uploads' playlist for the channel
+	const playlistId = await getChannelUploadsPlaylistId({channelId, ...options})
 
-export interface GetAllVideosRetardedOptions extends GetAllVideosCommonOptions {
-	youtubeChannelId: string
+	// get all of the videos for that playlist
+	return getAllVideos({playlistId, onVideosReceived, paginationLimit, ...options})
 }
