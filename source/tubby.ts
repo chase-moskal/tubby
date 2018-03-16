@@ -52,9 +52,9 @@ export interface RequestOptions extends CommonRequestOptions {
 }
 
 /**
- * Make a call to the youtube api
+ * Make an http 'get' request to the youtube api
  */
-export async function request(opts: RequestOptions): Promise<YoutubeResponse> {
+export async function youtubeGetRequest(opts: RequestOptions): Promise<YoutubeResponse> {
 	const options = {...defaultRequestOptions, ...opts}
 	let {apiKey, apiEndpoint, fetchParams, resource, data} = options
 	if (!apiKey) throw new Error("missing param 'apiKey' is required")
@@ -97,7 +97,7 @@ export interface Video {
  */
 export async function getChannelUploadsPlaylistId(opts: CommonRequestOptions & {channelId: string}): Promise<string> {
 	const {channelId, ...options} = opts
-	const response = await request({
+	const response = await youtubeGetRequest({
 		...options,
 		resource: "channels",
 		data: {id: channelId, part: "contentDetails"}
@@ -140,7 +140,7 @@ export async function getAllVideos(
 		if (nextPageToken) data.pageToken = nextPageToken
 
 		// query youtube for page of video results
-		const response = await request({
+		const response = await youtubeGetRequest({
 			resource: "playlistItems",
 			data,
 			...options
