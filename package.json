@@ -15,12 +15,17 @@
 		"clean": "rimraf dist && mkdirp dist",
 		"build": "npm run clean -s && run-p build-scripts build-styles && echo ✔ done production build",
 		"build-debug": "npm run clean -s && run-p build-scripts-debug build-styles && echo ✔ done debug build",
-		"build-scripts": "tsc && browserify source/tubby.global.ts -p [ tsify ] -g [ envify --NODE_ENV production ] -g uglifyify > dist/tubby.global.bundle.unoptimized.js && uglifyjs -cm < dist/tubby.global.bundle.unoptimized.js > dist/tubby.global.bundle.js",
-		"build-scripts-debug": "tsc && browserify source/tubby.global.ts --debug -p [ tsify ] > dist/tubby.global.bundle.js",
+		"build-scripts": "tsc && browserify source/tubby.global.tsx -p [ tsify ] -g [ envify --NODE_ENV production ] -g uglifyify > dist/tubby.global.bundle.unoptimized.js && uglifyjs -cm < dist/tubby.global.bundle.unoptimized.js > dist/tubby.global.bundle.js",
+		"build-scripts-debug": "tsc && browserify source/tubby.global.tsx --debug -p [ tsify ] > dist/tubby.global.bundle.js",
 		"build-styles": "node-sass --source-map true source/tubby.scss dist/tubby.css",
 		"watch-styles": "npm run build-styles -s -- --watch",
 		"start": "http-server",
 		"test": "exit 0"
+	},
+	"dependencies": {
+		"mobx": "4.1.0",
+		"mobx-preact": "2.0.0",
+		"preact": "8.2.7"
 	},
 	"devDependencies": {
 		"browserify": "16.1.1",

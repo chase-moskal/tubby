@@ -28,37 +28,19 @@
 			</section>
 			<section class="tubby-videos">
 				<h2>demo featuring <a href="https://www.youtube.com/user/JordanPetersonVideos">jordan b peterson's youtube channel</a></h2>
-				<ol reversed></ol>
+				<div class="tubby-demo"></div>
 			</section>
 		</main>
 		<script src="dist/tubby.global.bundle.js"></script>
 		<script>
 			const apiKey = "AIzaSyCqh3LYa_ikbnZJv0_Iird9Wk6ysK_kZXg" // "Tubby Demo Key"
-			const playlistId = "UUL_f53ZEJxp8TtlOkHwMV9Q" // 'uploads' playlist (all videos)
-			const videoList = document.querySelector(".tubby-videos ol")
-
+			const playlistId = "UUL_f53ZEJxp8TtlOkHwMV9Q" // 'uploads' playlist (all videos)			
+			const videoGridStore = tubby.renderers.renderVideoGrid(document.querySelector(".tubby-demo"))
 			const clock = Date.now()
-			let counter = 0
 
-			// function to render videos to the page
 			const onVideosReceived = videos => {
-				for (const video of videos) {
-					const li = document.createElement("li")
-					li.style.backgroundImage = `url("${video.thumbs.small}")`
-					li.innerHTML = `
-						<a tabindex="0" target="_blank" href="https://www.youtube.com/watch?v=${video.videoId}">
-							<p><strong>${video.title}</strong></p>
-							<p><small>${
-								video.description.length > 200
-									? video.description.substring(0, 200) + "..."
-									: video.description
-							}</small></p>
-						</a>
-					`
-					videoList.appendChild(li)
-				}
-				counter += videos.length
-				console.log(`tubby returned ${counter} videos after ${Date.now() - clock} ms`)
+				videoGridStore.videos = [...videoGridStore.videos, ...videos]
+				console.log(`tubby returned ${videoGridStore.videos.length} videos after ${Date.now() - clock} ms`)
 			}
 
 			tubby.getAllVideos({apiKey, playlistId, onVideosReceived})

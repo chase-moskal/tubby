@@ -9,6 +9,12 @@
 		"moduleResolution": "node",
 		"experimentalDecorators": true,
 		"sourceMap": true,
-		"declaration": true
-	}
+		"declaration": true,
+		"jsx": "react",
+		"jsxFactory": "h"
+	},
+	"include": [
+		"source/**/*.tsx",
+		"source/**/*.ts"
+	]
 }
