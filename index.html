@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<title>tubby — youtube api helper</title>
+		<title>tubby — youtube channel instant search</title>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton:400,800"/>
 		<link rel="stylesheet" href="dist/tubby.css"/>
 	</head>
@@ -11,7 +11,7 @@
 		<header class="siteheader">
 			<h1>
 				<strong>tubby</strong>
-				<span>— youtube api helper</span>
+				<span>— youtube channel instant search</span>
 			</h1>
 			<div>
 				<p>sourcecode at <a href="https://github.com/chase-moskal/tubby">github.com/chase-moskal/tubby</a></p>
@@ -19,10 +19,13 @@
 			</div>
 		</header>
 		<main>
-			<section>
-				<h2>tubby is a work-in-progress javascript module</h2>
+			<section class="textcontent">
+				<h2>tubby is work-in-progress tech for web developers</h2>
 				<ul>
-					<li>tubby makes it easy to fetch any youtube channel's whole public catalog</li>
+					<li>the objective of tubby is to create a simple ui which enables users to easily instant-search (as-you-type) through a youtube channel's whole video catalog</li>
+					<li>the main tubby javascript module has some functions to fetch a youtube channel's entire video catalog</li>
+					<li>tubby also features some preact/mobx ui components</li>
+					<li>tubby is written in typescript</li>
 					<li>tubby is free and open source</li>
 				</ul>
 			</section>
@@ -34,17 +37,26 @@
 		<script src="dist/tubby.global.bundle.js"></script>
 		<script>
 			const apiKey = "AIzaSyCqh3LYa_ikbnZJv0_Iird9Wk6ysK_kZXg" // "Tubby Demo Key"
-			const playlistId = "UUL_f53ZEJxp8TtlOkHwMV9Q" // 'uploads' playlist (all videos)			
-			const videoGridStore = tubby.renderers.renderVideoGrid(document.querySelector(".tubby-demo"))
+			const playlistId = "UUL_f53ZEJxp8TtlOkHwMV9Q" // 'uploads' playlist (all videos)
 			const clock = Date.now()
 
-			const onVideosReceived = videos => {
-				videoGridStore.videos = [...videoGridStore.videos, ...videos]
-				console.log(`tubby returned ${videoGridStore.videos.length} videos after ${Date.now() - clock} ms`)
-			}
+			const videoGridStore = new tubby.components.VideoGridStore()
+			preact.render(
+				preact.h(tubby.components.VideoGrid, {store: videoGridStore}),
+				document.querySelector(".tubby-demo")
+			)
 
-			tubby.getAllVideos({apiKey, playlistId, onVideosReceived})
-				.then(videos => console.log(`tubby finished all ${videos.length} videos after ${Date.now() - clock} ms`))
+			tubby.getAllVideos({
+				apiKey,
+				playlistId,
+				onVideosReceived: videos => {
+					videoGridStore.videos = [...videoGridStore.videos, ...videos]
+					console.log(`tubby returned ${videoGridStore.videos.length} videos after ${Date.now() - clock} ms`)
+				}
+			})
+			.then(videos => {
+				console.log(`tubby finished all ${videos.length} videos after ${Date.now() - clock} ms`)
+			})
 
 			// // if you only have the channel id, this method is equivalent but slower (one extra round trip)
 			// tubby.getAllVideosForChannel({apiKey, channelId, onVideosReceived})

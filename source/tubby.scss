@@ -67,6 +67,11 @@ html.tubby {
 		margin: 2em auto;
 	}
 
+	.textcontent {
+		margin: 0;
+		max-width: 480px;
+	}
+
 	.tubby-videos {
 		ol {
 			margin: 1em auto;
@@ -101,7 +106,7 @@ html.tubby {
 					rgba(25,25,25, 0.1)
 				);
 			}
-			
+
 			& > a {
 				z-index: 2;
 				position: relative;
@@ -119,6 +124,8 @@ html.tubby {
 					outline-color: skyblue;
 				}
 			}
+
+			p { line-height: 1.1em; }
 		}
 
 		* + p {

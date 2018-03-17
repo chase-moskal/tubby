@@ -1,10 +1,12 @@
 {
 	"name": "tubby",
-	"version": "0.0.0",
-	"description": "youtube api helper, list a channel's videos",
+	"version": "0.0.1",
+	"description": "youtube channel instant search, and related tooling",
 	"keywords": [
 		"youtube",
-		"api-helper"
+		"api-helper",
+		"searchbar",
+		"instant-search"
 	],
 	"main": "dist/tubby",
 	"types": "dist/tubby.d.ts",

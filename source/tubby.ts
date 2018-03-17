@@ -24,17 +24,19 @@ export const defaultRequestOptions: Partial<CommonRequestOptions> = {
 
 /**
  * Encode an object as url query string parameters
- * - you know, like "?key=value&alpha=beta"
+ * - includes the leading "?" prefix
+ * - example input — {key: "value", alpha: "beta"}
+ * - example output — output "?key=value&alpha=beta"
+ * - returns empty string when given an empty object
  */
-function encodeQueryParams(data: {[key: string]: any}): string {
-	let subject = ""
-	let first = true
-	for (const key of Object.keys(data)) {
-		const separator = first ? "?" : "&"
-		subject += `${separator}${key}=${data[key]}`
-		first = false
-	}
-	return subject
+function encodeQueryString(params: {[key: string]: any}): string {
+	const keys = Object.keys(params)
+	return keys.length
+		? "?" + keys
+			.map(key => encodeURIComponent(key)
+				+ "=" + encodeURIComponent(params[key]))
+			.join("&")
+		: ""
 }
 
 /**
@@ -65,7 +67,7 @@ export async function youtubeGetRequest(opts: RequestOptions): Promise<YoutubeRe
 	data.key = apiKey
 
 	// construct the final url
-	const url = apiEndpoint + resource + encodeQueryParams(data)
+	const url = apiEndpoint + resource + encodeQueryString(data)
 
 	// execute the request and gather the json response
 	const response = await (await fetch(url, fetchParams)).json()
@@ -93,7 +95,7 @@ export interface Video {
 }
 
 /**
- * Get the id of the 'uploads' playlist which contains all the videos
+ * Get the id of the 'uploads' playlist which contains all of a channel's videos
  */
 export async function getChannelUploadsPlaylistId(opts: CommonRequestOptions & {channelId: string}): Promise<string> {
 	const {channelId, ...options} = opts
@@ -106,7 +108,7 @@ export async function getChannelUploadsPlaylistId(opts: CommonRequestOptions & {
 }
 
 /**
- * Get all videos of a playlist ('upload' playlist is a list of all videos)
+ * Get all videos in a playlist ('upload' playlist is a list of all videos)
  * - sequentially read all paginated videos — *every single one of them*
  * - it can take awhile, i found a quarter second per round trip — 50 videos per trip
  * - you can render videos as they load realtime by providing an 'onVideosReceived' callback
