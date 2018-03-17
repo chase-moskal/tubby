@@ -8,12 +8,11 @@ import SearchBar, {SearchBarStore} from "./components/search-bar"
 import VideoGrid, {VideoGridStore} from "./components/video-grid"
 import InstantVideoSearch, {InstantVideoSearchStore} from "./components/instant-video-search"
 
-window["tubby"] = tubby
-
 window["mobx"] = mobx
 window["preact"] = preact
 window["mobxPreact"] = mobxPreact
 
+window["tubby"] = tubby
 window["tubby"]["components"] = {
 	VideoGrid,
 	VideoGridStore,
