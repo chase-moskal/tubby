@@ -20,13 +20,13 @@
 		</header>
 		<main>
 			<section class="textcontent">
-				<h2>tubby is work-in-progress tech for web developers</h2>
+				<h2>tubby is some frontend tech for web developers</h2>
 				<ul>
-					<li>the objective of tubby is to create a simple ui which enables users to easily instant-search (as-you-type) through a youtube channel's whole video catalog</li>
-					<li>the main tubby javascript module has some functions to fetch a youtube channel's entire video catalog</li>
-					<li>tubby also features some preact/mobx ui components</li>
+					<li>tubby is a user interface for instant-searching (as-you-type) through a youtube channel's whole public catalog of videos</li>
+					<li>tubby has preact components which use mobx for state management</li>
+					<li>tubby's main javascript module has some functions to fetch a youtube channel's entire video catalog</li>
 					<li>tubby is written in typescript</li>
-					<li>tubby is free and open source</li>
+					<li>tubby is free and open source <a href="https://github.com/chase-moskal/tubby">on github</a></li>
 				</ul>
 			</section>
 			<section class="tubby-videos">
@@ -38,11 +38,11 @@
 		<script>
 			const apiKey = "AIzaSyCqh3LYa_ikbnZJv0_Iird9Wk6ysK_kZXg" // "Tubby Demo Key"
 			const playlistId = "UUL_f53ZEJxp8TtlOkHwMV9Q" // 'uploads' playlist (all videos)
-			const clock = Date.now()
+			const clock = Date.now() // to log time measurement to console
 
-			const videoGridStore = new tubby.components.VideoGridStore()
+			const instantVideoSearchStore = new tubby.components.InstantVideoSearchStore();
 			preact.render(
-				preact.h(tubby.components.VideoGrid, {store: videoGridStore}),
+				preact.h(tubby.components.InstantVideoSearch, {store: instantVideoSearchStore}),
 				document.querySelector(".tubby-demo")
 			)
 
@@ -50,8 +50,8 @@
 				apiKey,
 				playlistId,
 				onVideosReceived: videos => {
-					videoGridStore.videos = [...videoGridStore.videos, ...videos]
-					console.log(`tubby returned ${videoGridStore.videos.length} videos after ${Date.now() - clock} ms`)
+					instantVideoSearchStore.videos = [...instantVideoSearchStore.videos, ...videos]
+					console.log(`tubby returned ${instantVideoSearchStore.videos.length} videos after ${Date.now() - clock} ms`)
 				}
 			})
 			.then(videos => {

@@ -7,6 +7,9 @@
 	margin: 2em auto;
 }
 
+$highlightcolor: skyblue;
+$focusoutline: 3px solid $highlightcolor;
+
 html.tubby {
 	font-family: Neuton, sans-serif;
 	font-size: 16px;
@@ -21,6 +24,10 @@ html.tubby {
 		margin: 0;
 		padding: 0;
 		box-sizing: border-box;
+	}
+
+	*:focus {
+		outline: $focusoutline;
 	}
 
 	a {
@@ -119,9 +126,9 @@ html.tubby {
 				text-decoration: none;
 
 				cursor: pointer;
-				outline: 1px solid transparent;
+				outline: 3px solid transparent;
 				&:hover, &:focus {
-					outline-color: skyblue;
+					outline-color: $highlightcolor;
 				}
 			}
 
@@ -147,6 +154,35 @@ html.tubby {
 			li {
 				margin-bottom: 0.5em;
 			}
+		}
+	}
+
+	.searchbar {
+		
+		input {
+			display: block;
+			font-size: 1.5em;
+			margin: 0 auto;
+			padding: 0.6em 1.2em;
+			width: 100%;
+			border: none;
+			color: darkslategrey;
+
+			&:focus {
+				outline: $focusoutline;
+			}
+		}
+	}
+
+	.instant-video-search {
+		margin: 1em auto;
+		min-height: 800px;
+		padding-bottom: 400px;
+
+		.search-info {
+			opacity: 0.6;
+			padding: 0 0.5em;
+			text-align: right;
 		}
 	}
 }

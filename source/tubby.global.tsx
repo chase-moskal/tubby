@@ -4,7 +4,9 @@ import * as preact from "preact"
 import * as mobxPreact from "mobx-preact"
 
 import * as tubby from "./tubby"
+import SearchBar, {SearchBarStore} from "./components/search-bar"
 import VideoGrid, {VideoGridStore} from "./components/video-grid"
+import InstantVideoSearch, {InstantVideoSearchStore} from "./components/instant-video-search"
 
 window["tubby"] = tubby
 
@@ -14,5 +16,9 @@ window["mobxPreact"] = mobxPreact
 
 window["tubby"]["components"] = {
 	VideoGrid,
-	VideoGridStore
+	VideoGridStore,
+	SearchBar,
+	SearchBarStore,
+	InstantVideoSearch,
+	InstantVideoSearchStore
 }

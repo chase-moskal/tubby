@@ -78,22 +78,22 @@ getAllVideos({
 
 these user interface components allow the user to instant-search through a collection of videos
 
-- **VideoGrid / VideoGridStore** — display videos to the user
-- *[coming soon]* — **Searchbar / SearchbarStore** — user can input search terms
-- *[coming soon]* — **InstantVideoLookup / InstantVideoLookupStore** — user can insta-search through videos
-	- comprised of the VideoGrid and Searchbar components
+- **InstantVideoLookup / InstantVideoLookupStore** — user can insta-search through videos
+	- **VideoGrid / VideoGridStore** — display videos to the user
+	- **SearchBar / SearchBarStore** — user can input search terms
 
 ### module usage
 
 ```jsx
 import {h, render} from "preact"
-import VideoGrid, {VideoGridStore} from "tubby/dist/components/video-grid"
+import InstantVideoSearch, {InstantVideoSearchStore} from 
+	"tubby/dist/components/instant-video-search"
 
-// create the video grid store
-const store = new VideoGridStore()
+// create the instant video search store
+const store = new InstantVideoSearchStore()
 
-// render the video grid component
-render(<VideoGrid {...{store}}/>, document.querySelector(".tubby-demo"))
+// render instant video search component
+render(<InstantVideoSearch {...{store}}/>, document.querySelector(".tubby-demo"))
 
 // get videos and add them to the store
 tubby.getAllVideos({
@@ -117,12 +117,12 @@ tubby.getAllVideos({
 <script src="tubby.global.bundle.js"></script>
 <script>
 
-	// create the video grid store
-	const videoGridStore = new tubby.components.VideoGridStore()
+	// create the instant video search store
+	const store = new tubby.components.InstantVideoSearchStore()
 
-	// render the video grid component
+	// render the instant video search component
 	preact.render(
-		preact.h(tubby.components.VideoGrid, {store: videoGridStore}),
+		preact.h(tubby.components.InstantVideoSearch, {store}),
 		document.querySelector(".tubby-demo")
 	)
 
@@ -131,8 +131,8 @@ tubby.getAllVideos({
 		apiKey,
 		playlistId,
 		onVideosReceived: videos => {
-			videoGridStore.videos = [...videoGridStore.videos, ...videos]
-			console.log(`tubby returned ${videoGridStore.videos.length} videos`)
+			store.videos = [...store.videos, ...videos]
+			console.log(`tubby returned ${store.videos.length} videos`)
 		}
 	})
 	.then(videos => {
