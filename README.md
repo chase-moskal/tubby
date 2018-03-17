@@ -89,8 +89,11 @@ these user interface components allow the user to instant-search through a colle
 import {h, render} from "preact"
 import VideoGrid, {VideoGridStore} from "tubby/dist/components/video-grid"
 
-// create a new video grid store
+// create the video grid store
 const store = new VideoGridStore()
+
+// render the video grid component
+render(<VideoGrid {...{store}}/>, document.querySelector(".tubby-demo"))
 
 // get videos and add them to the store
 tubby.getAllVideos({
@@ -100,32 +103,40 @@ tubby.getAllVideos({
 		store.videos = [...store.videos, ...videos]
 	}
 })
-
-// place a video grid instance in the document
-render(<VideoGrid {...{store}}/>, document.querySelector(".video-grid-container"))
 ```
 
 ### bundle usage
 
-- the components, along with preact and mobx too, are contained within the global bundle
-
-- you can use the following render functions to place the components into the document
-
-- a render function will return the newly created store for the component — the component's state is kept in the store — any changes to the store object's properties will automatically rerender the component (this is mobx state management)
+- included in the bundle
+	- tubby
+		- components
+	- preact
+	- mobxPreact
 
 ```html
 <script src="tubby.global.bundle.js"></script>
 <script>
+
+	// create the video grid store
+	const videoGridStore = new tubby.components.VideoGridStore()
+
 	// render the video grid component
-	const videoGridStore = tubby.renderers.renderVideoGrid(document.querySelector(".video-grid"))
+	preact.render(
+		preact.h(tubby.components.VideoGrid, {store: videoGridStore}),
+		document.querySelector(".tubby-demo")
+	)
 
 	// get videos and add them to the store
 	tubby.getAllVideos({
-		apiKey: "abc123",
-		playlistId: "xyz789",
+		apiKey,
+		playlistId,
 		onVideosReceived: videos => {
 			videoGridStore.videos = [...videoGridStore.videos, ...videos]
+			console.log(`tubby returned ${videoGridStore.videos.length} videos`)
 		}
+	})
+	.then(videos => {
+		console.log(`tubby finished all ${videos.length} videos`)
 	})
 </script>
 ```

@@ -1,9 +1,18 @@
 
-import {h, render} from "preact"
+import * as mobx from "mobx"
+import * as preact from "preact"
+import * as mobxPreact from "mobx-preact"
 
 import * as tubby from "./tubby"
 import VideoGrid, {VideoGridStore} from "./components/video-grid"
 
-window["preact"] = {h, render}
 window["tubby"] = tubby
-window["tubby"]["components"] = {VideoGrid, VideoGridStore}
+
+window["mobx"] = mobx
+window["preact"] = preact
+window["mobxPreact"] = mobxPreact
+
+window["tubby"]["components"] = {
+	VideoGrid,
+	VideoGridStore
+}
