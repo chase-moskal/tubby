@@ -1,11 +1,13 @@
 
 # tubby — youtube channel instant search
 
-- tubby is a ***work-in-progress***
+a collection of frontend javascript code, ui components, and stylesheets to provide a user interface for searching through youtube videos
+
 - see the website and live demo: [chasemoskal.com/tubby](https://chasemoskal.com/tubby/)
 - there are two ways you can install tubby:
 	1. module usage *[recommended]* — `npm install tubby`
-	2. bundle usage — download `tubby/dist/tubby.global.bundle.js` and script-tag it in
+	2. bundle usage — download [tubby.global.bundle.js](https://raw.githubusercontent.com/chase-moskal/tubby/gh-pages/dist/tubby.global.bundle.js) and script-tag it in
+- you may also want to grab a copy of the [css](https://raw.githubusercontent.com/chase-moskal/tubby/gh-pages/dist/tubby.css) (or [scss](https://raw.githubusercontent.com/chase-moskal/tubby/master/source/tubby.scss) if you're fancy)
 
 ## tubby module for making youtube api calls
 
@@ -50,7 +52,7 @@ import * as tubby from "tubby"
 
 getAllVideos({
 	apiKey: "abc123",
-	playlistId: "xyz789",
+	playlistId: "xyz890",
 	onVideosReceived: videos => {
 		console.log("loaded some videos", videos)
 	}
@@ -65,7 +67,7 @@ getAllVideos({
 <script>
 	tubby.getAllVideos({
 		apiKey: "abc123",
-		playlistId: "xyz789",
+		playlistId: "xyz890",
 		onVideosReceived: videos => {
 			console.log("loaded some videos", videos)
 		}
@@ -78,9 +80,13 @@ getAllVideos({
 
 these user interface components allow the user to instant-search through a collection of videos
 
-- **InstantVideoLookup / InstantVideoLookupStore** — user can insta-search through videos
-	- **VideoGrid / VideoGridStore** — display videos to the user
-	- **SearchBar / SearchBarStore** — user can input search terms
+- **InstantVideoLookup** */ InstantVideoLookupStore* — user can insta-search through videos
+	- **VideoGrid** */ VideoGridStore* — display videos to the user
+	- **SearchBar** */ SearchBarStore* — user can input search terms
+
+regarding css styles,
+- if you're using scss, use the mixins in `tubby.scss`
+- if you're using regular old css, link in `tubby.css` and add the class `tubby` to your `<html>` element
 
 ### module usage
 
@@ -98,7 +104,7 @@ render(<InstantVideoSearch {...{store}}/>, document.querySelector(".tubby-demo")
 // get videos and add them to the store
 tubby.getAllVideos({
 	apiKey: "abc123",
-	playlistId: "xyz789",
+	playlistId: "xyz890",
 	onVideosReceived: videos => {
 		store.videos = [...store.videos, ...videos]
 	}
@@ -129,8 +135,8 @@ tubby.getAllVideos({
 
 	// get videos and add them to the store
 	tubby.getAllVideos({
-		apiKey,
-		playlistId,
+		apiKey: "abc123",
+		playlistId: "xyz890",
 		onVideosReceived: videos => {
 			store.videos = [...store.videos, ...videos]
 			console.log(`tubby returned ${store.videos.length} videos`)

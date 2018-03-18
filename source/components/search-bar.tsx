@@ -52,7 +52,7 @@ export default class SearchBar extends Component<{store: SearchBarStore}, any> {
 	render() {
 		const {store} = this.props
 		return (
-			<div className="searchbar">
+			<div className="search-bar">
 				<input
 					type="text"
 					placeholder="search videos"

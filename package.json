@@ -1,11 +1,12 @@
 {
 	"name": "tubby",
-	"version": "0.1.0",
-	"description": "youtube channel instant search, and related tooling",
+	"version": "0.1.1",
+	"description": "youtube channel instant search",
 	"keywords": [
 		"youtube",
 		"api-helper",
-		"searchbar",
+		"search-bar",
+		"video-grid",
 		"instant-search"
 	],
 	"main": "dist/tubby",

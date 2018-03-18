@@ -1,94 +1,41 @@
 
-@charset "utf-8";
+$tubby-highlightcolor: skyblue;
+$tubby-focusoutline: 3px solid $tubby-highlightcolor;
 
-@mixin tubby-slice() {
-	padding: 0 5%;
-	max-width: 1600px;
-	margin: 2em auto;
-}
+@mixin tubby() {
 
-$highlightcolor: skyblue;
-$focusoutline: 3px solid $highlightcolor;
-
-html.tubby {
-	font-family: Neuton, sans-serif;
-	font-size: 16px;
-	background: #3d4c63;
-	background: linear-gradient(to bottom right,
-		mix(#3d4c63, white, 70%),
-		#3d4c63 60%
-	) fixed;
-	color: #eee;
-
-	&, * {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
-
-	*:focus {
-		outline: $focusoutline;
-	}
-
-	a {
-		$linkcolor: mix(skyblue, white, 60%);
-		color: $linkcolor;
-		text-decoration: none;
-		&:visited { color: $linkcolor; }
-		&:hover, &:focus { color: darken($linkcolor, 2%); text-decoration: underline; }
-		&:active { color: darken($linkcolor, 4%); }
-	}
-
-	h1, h2 {
-		font-family: Neuton, sans-serif;
-		font-weight: 800;
-	}
-
-	ul {
-		margin-left: 1.5em;
-	}
-
-	.siteheader {
-		@include tubby-slice;
-		& > h1 {
-			font-size: 2.5em;
-			& > strong {
-				font-size: 1.5em;
-			}
-			& > span {
-				opacity: 0.7;
-				font-weight: normal;
-			}
-		}
-		& > div {
-			opacity: 0.7;
-			margin-left: 0.5em;
-		}
-	}
-
-	main {
-		@include tubby-slice;
-	}
-
-	section, header, footer {
+	.slice {
+		padding: 0 5%;
+		max-width: 1600px;
 		margin: 2em auto;
 	}
 
-	.textcontent {
-		margin: 0;
-		max-width: 480px;
+	.search-bar {
+		input {
+			display: block;
+			font-size: 1.5em;
+			margin: 0 auto;
+			padding: 0.6em 1.2em;
+			width: 100%;
+			border: none;
+			background: white;
+			color: darkslategrey;
+	
+			&:focus {
+				outline: $tubby-focusoutline;
+			}
+		}
 	}
 
-	.tubby-videos {
-		ol {
-			margin: 1em auto;
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: space-evenly;
-			width: 100%;
-			list-style: none;
-			background: rgba(0,0,0, 0.1);
-		}
+	.video-grid {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-evenly;
+		width: 100%;
+		margin: 1em auto;
+		padding: 0.5em;
+		list-style: none;
+		background: rgba(0,0,0, 0.1);
 
 		li {
 			flex: 1 1 0;
@@ -128,7 +75,7 @@ html.tubby {
 				cursor: pointer;
 				outline: 3px solid transparent;
 				&:hover, &:focus {
-					outline-color: $highlightcolor;
+					outline-color: $tubby-highlightcolor;
 				}
 			}
 
@@ -140,7 +87,7 @@ html.tubby {
 		}
 
 		@media (max-width: 400px) {
-			ol, li {
+			&, li {
 				display: block;
 				width: 100%;
 				min-width: unset;
@@ -157,23 +104,6 @@ html.tubby {
 		}
 	}
 
-	.searchbar {
-		
-		input {
-			display: block;
-			font-size: 1.5em;
-			margin: 0 auto;
-			padding: 0.6em 1.2em;
-			width: 100%;
-			border: none;
-			color: darkslategrey;
-
-			&:focus {
-				outline: $focusoutline;
-			}
-		}
-	}
-
 	.instant-video-search {
 		margin: 1em auto;
 		min-height: 800px;
@@ -184,5 +114,78 @@ html.tubby {
 			padding: 0 0.5em;
 			text-align: right;
 		}
+	}
+}
+
+html.tubby {
+	@include tubby();
+}
+
+html.tubbydemo {
+	font-family: Neuton, sans-serif;
+	font-size: 16px;
+	color: #eee;
+	background: #3d4c63;
+	background: linear-gradient(
+		to bottom right,
+		mix(#3d4c63, white, 70%),
+		#3d4c63 60%
+	) fixed;
+
+	&, * {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	*:focus {
+		outline: $tubby-focusoutline;
+	}
+
+	a {
+		$linkcolor: mix(skyblue, white, 60%);
+		color: $linkcolor;
+		text-decoration: none;
+		&:visited { color: $linkcolor; }
+		&:hover, &:focus { color: darken($linkcolor, 2%); text-decoration: underline; }
+		&:active { color: darken($linkcolor, 4%); }
+	}
+
+	h1, h2 {
+		font-family: Neuton, sans-serif;
+		font-weight: 800;
+	}
+
+	ul {
+		margin-left: 1.5em;
+	}
+
+	.siteheader {
+		& > h1 {
+			font-size: 2.5em;
+
+			& > strong {
+				font-size: 1.5em;
+			}
+
+			& > span {
+				opacity: 0.7;
+				font-weight: normal;
+			}
+		}
+
+		& > div {
+			opacity: 0.7;
+			margin-left: 0.5em;
+		}
+	}
+
+	section, header, footer {
+		margin: 2em auto;
+	}
+
+	.textcontent {
+		margin: 0;
+		max-width: 480px;
 	}
 }

@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="tubby">
+<html class="tubby tubbydemo">
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -8,7 +8,7 @@
 		<link rel="stylesheet" href="dist/tubby.css"/>
 	</head>
 	<body>
-		<header class="siteheader">
+		<header class="siteheader slice">
 			<h1>
 				<strong>tubby</strong>
 				<span>— youtube channel instant search</span>
@@ -18,7 +18,7 @@
 				<p>by <a href="https://chasemoskal.com">chase moskal</a></p>
 			</div>
 		</header>
-		<main>
+		<main class="slice">
 			<section class="textcontent">
 				<h2>tubby is some frontend tech for web developers</h2>
 				<ul>
@@ -29,9 +29,9 @@
 					<li>tubby is free and open source <a href="https://github.com/chase-moskal/tubby">on github</a></li>
 				</ul>
 			</section>
-			<section class="tubby-videos">
+			<section>
 				<h2>demo featuring <a href="https://www.youtube.com/user/JordanPetersonVideos">jordan b peterson's youtube channel</a></h2>
-				<div class="tubby-demo"></div>
+				<div class="landing-zone"></div>
 			</section>
 		</main>
 		<script src="dist/tubby.global.bundle.js"></script>
@@ -43,7 +43,7 @@
 			const instantVideoSearchStore = new tubby.components.InstantVideoSearchStore();
 			preact.render(
 				preact.h(tubby.components.InstantVideoSearch, {store: instantVideoSearchStore}),
-				document.querySelector(".tubby-demo")
+				document.querySelector(".landing-zone")
 			)
 
 			tubby.getAllVideos({
