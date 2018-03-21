@@ -1,7 +1,7 @@
 
 import {h, Component} from "preact"
 import {observer} from "mobx-preact"
-import {observable, computed, autorun} from "mobx"
+import {observable, computed, autorun, action} from "mobx"
 
 import SearchBar, {SearchBarStore} from "./search-bar"
 import VideoGrid, {VideoGridStore} from "./video-grid"
@@ -10,8 +10,8 @@ import {Video} from "../tubby"
 
 export class InstantVideoSearchStore {
 	@observable videos: Video[] = []
-	@observable searchBarStore: SearchBarStore
-	@observable videoGridStore: VideoGridStore
+	@observable searchBarStore: SearchBarStore = new SearchBarStore()
+	@observable videoGridStore: VideoGridStore = new VideoGridStore()
 
 	// correlate searchbar store results with videos
 	@computed get videoResults(): Video[] {
@@ -21,32 +21,28 @@ export class InstantVideoSearchStore {
 			!!searchResults.find(result => result.index === index))
 	}
 
-	constructor({
-		searchBarStore = new SearchBarStore(),
-		videoGridStore = new VideoGridStore()
-	}: {
-		searchBarStore?: SearchBarStore
-		videoGridStore?: VideoGridStore
-	} = {}) {
-		this.searchBarStore = searchBarStore
-		this.videoGridStore = videoGridStore
+	@action setVideos(videos: Video[]): void {
+		this.videos = [...videos]
+	}
+
+	constructor() {
 
 		// convert videos into searchables
 		autorun(() => {
 			const videos = [...this.videos]
-			this.searchBarStore.searchables = videos.map((video, index) => ({
+			this.searchBarStore.setSearchables(videos.map((video, index) => ({
 				index,
 				content: [
 					video.title,
 					video.description
 				].join(", ")
-			}))
+			})))
 		})
 
 		// display results in video grid
 		autorun(() => {
-			const videoResults = [...this.videoResults]
-			this.videoGridStore.videos = videoResults
+			const videos = [...this.videoResults]
+			this.videoGridStore.setVideos(videos)
 		})
 	}
 }

@@ -1,12 +1,16 @@
 
 import {Video} from "../tubby"
 
-import {observable} from "mobx"
+import {observable, action} from "mobx"
 import {h, Component} from "preact"
 import {observer} from "mobx-preact"
 
 export class VideoGridStore {
 	@observable videos: Video[] = []
+
+	@action setVideos(videos: Video[]): void {
+		this.videos = [...videos]
+	}
 }
 
 @observer

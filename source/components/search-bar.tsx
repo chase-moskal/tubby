@@ -1,7 +1,7 @@
 
 import {h, Component} from "preact"
 import {observer} from "mobx-preact"
-import {observable, computed} from "mobx"
+import {observable, computed, action} from "mobx"
 
 const escapeRegularExpression = (s: string) =>
 	s.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
@@ -37,6 +37,10 @@ export class SearchBarStore {
 			}
 			return true
 		})
+	}
+
+	@action setSearchables(searchables: Searchable[]): void {
+		this.searchables = [...searchables]
 	}
 }
 

@@ -36,6 +36,8 @@
 		</main>
 		<script src="dist/tubby.global.bundle.js"></script>
 		<script>
+			mobx.configure({useStrict: true})
+
 			const apiKey = "AIzaSyDeHpB9W14feQs8myoWgFAZOCrDeKMLRwE" // "Tubby Demo Key"
 			const playlistId = "UUL_f53ZEJxp8TtlOkHwMV9Q" // 'uploads' playlist (all videos)
 			const clock = Date.now() // to log time measurement to console
