@@ -39,6 +39,10 @@ export class SearchBarStore {
 		})
 	}
 
+	@action setTextInput(input: string): void {
+		this.textInput = input
+	}
+
 	@action setSearchables(searchables: Searchable[]): void {
 		this.searchables = [...searchables]
 	}
@@ -47,10 +51,10 @@ export class SearchBarStore {
 @observer
 export default class SearchBar extends Component<{store: SearchBarStore}, any> {
 
-	private updateTextInput = (event) => {
+	private updateTextInput = event => {
 		const {store} = this.props
 		const inputElement: HTMLInputElement = event.currentTarget
-		store.textInput = inputElement.value
+		store.setTextInput(inputElement.value)
 	}
 
 	render() {
