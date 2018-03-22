@@ -91,6 +91,7 @@ export interface Video {
 	thumbs: {
 		small: string
 		medium: string
+		large: string
 	}
 }
 
@@ -155,7 +156,8 @@ export async function getAllVideos(
 			description: item.snippet.description,
 			thumbs: {
 				small: item.snippet.thumbnails.default.url,
-				medium: item.snippet.thumbnails.medium.url
+				medium: item.snippet.thumbnails.medium.url,
+				large: item.snippet.thumbnails.high.url
 			}
 		}))
 
