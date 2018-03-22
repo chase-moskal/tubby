@@ -124,15 +124,18 @@ export interface TubbyThumbs {
 	large: string
 	huge?: string
 	full?: string
+	biggest: string
 }
 
-const extractThumbs = (thumbnails: YoutubeThumbnails): TubbyThumbs => ({
-	small: thumbnails.default.url,
-	medium: thumbnails.medium.url,
-	large: thumbnails.high.url,
-	huge: thumbnails.standard ? thumbnails.standard.url : null,
-	full: thumbnails.maxres ? thumbnails.maxres.url : null
-})
+const extractThumbs = (thumbnails: YoutubeThumbnails): TubbyThumbs => {
+	const small = thumbnails.default.url
+	const medium = thumbnails.medium.url
+	const large = thumbnails.high ? thumbnails.high.url : null
+	const huge = thumbnails.standard ? thumbnails.standard.url : null
+	const full = thumbnails.maxres ? thumbnails.maxres.url : null
+	const biggest = full || huge || large || medium || small
+	return {small, medium, large, huge, full, biggest}
+}
 
 /**
  * Get all videos in a playlist ('upload' playlist is a list of all videos)
