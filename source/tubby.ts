@@ -1,12 +1,88 @@
 
+////////
+//////// TUBBY INTERFACES
+////////
+
 /**
- * Options common to all requests to the youtube api
+ * Options common to all youtube api requests
  */
 export interface CommonRequestOptions {
 	apiKey: string
 	apiEndpoint?: string
 	fetchParams?: RequestInit
 }
+
+/**
+ * Response from the youtube api
+ */
+export type YoutubeResponse = any
+
+/**
+ * Options for a generic request to the youtube api
+ * - provide your own resource and data
+ */
+export interface RequestOptions extends CommonRequestOptions {
+	resource: string
+	data: any
+}
+
+export interface GetChannelUploadsPlaylistIdOptions extends CommonRequestOptions {
+	channelId: string
+}
+
+export interface YoutubeThumbnail {
+	url: string
+	width: number
+	height: number
+}
+
+export interface YoutubeThumbnails {
+	default: YoutubeThumbnail
+	medium: YoutubeThumbnail
+	high: YoutubeThumbnail
+	standard?: YoutubeThumbnail
+	maxres?: YoutubeThumbnail
+}
+
+/**
+ * Tubby-formatted youtube thumbnails
+ */
+export interface TubbyThumbs {
+	small: string
+	medium: string
+	large: string
+	huge?: string
+	full?: string
+	biggest: string
+}
+
+/**
+ * Tubby-formatted youtube video
+ */
+export interface Video {
+	videoId: string
+	title: string
+	description: string
+	thumbs: TubbyThumbs
+}
+
+export interface GetAllVideosOptions extends CommonRequestOptions {
+	playlistId: string;
+	paginationLimit?: number
+	data?: any;
+	onVideosReceived?: (videos: Video[]) => void
+}
+
+export interface GetAllVideosForChannelOptions extends CommonRequestOptions {
+	channelId: string;
+	paginationLimit?: number
+	onVideosReceived?: (videos: Video[]) => void
+}
+
+
+////////
+//////// TUBBY UTILITIES
+////////
 
 /**
  * Default options for all youtube api requests
@@ -29,7 +105,7 @@ export const defaultRequestOptions: Partial<CommonRequestOptions> = {
  * - example output — output "?key=value&alpha=beta"
  * - returns empty string when given an empty object
  */
-function encodeQueryString(params: {[key: string]: any}): string {
+export function encodeQueryString(params: {[key: string]: any}): string {
 	const keys = Object.keys(params)
 	return keys.length
 		? "?" + keys
@@ -40,18 +116,22 @@ function encodeQueryString(params: {[key: string]: any}): string {
 }
 
 /**
- * Response from the youtube api
+ * Make youtube thumbnails more convenient to work with
  */
-export type YoutubeResponse = any
-
-/**
- * Options for a generic request to the youtube api
- * - provide your own resource and data
- */
-export interface RequestOptions extends CommonRequestOptions {
-	resource: string
-	data: any
+export const convertToTubbyThumbs = (thumbnails: YoutubeThumbnails): TubbyThumbs => {
+	const small = thumbnails.default.url
+	const medium = thumbnails.medium.url
+	const large = thumbnails.high ? thumbnails.high.url : null
+	const huge = thumbnails.standard ? thumbnails.standard.url : null
+	const full = thumbnails.maxres ? thumbnails.maxres.url : null
+	const biggest = full || huge || large || medium || small
+	return {small, medium, large, huge, full, biggest}
 }
+
+
+////////
+//////// TUBBY FUNCTIONS
+////////
 
 /**
  * Make an http 'get' request to the youtube api
@@ -82,19 +162,9 @@ export async function youtubeGetRequest(opts: RequestOptions): Promise<YoutubeRe
 }
 
 /**
- * Youtube video
+ * Get the id of the 'uploads' playlist (which contains all of a channel's videos)
  */
-export interface Video {
-	videoId: string
-	title: string
-	description: string
-	thumbs: TubbyThumbs
-}
-
-/**
- * Get the id of the 'uploads' playlist which contains all of a channel's videos
- */
-export async function getChannelUploadsPlaylistId(opts: CommonRequestOptions & {channelId: string}): Promise<string> {
+export async function getChannelUploadsPlaylistId(opts: GetChannelUploadsPlaylistIdOptions): Promise<string> {
 	const {channelId, ...options} = opts
 	const response = await youtubeGetRequest({
 		...options,
@@ -104,53 +174,13 @@ export async function getChannelUploadsPlaylistId(opts: CommonRequestOptions & {
 	return response.items[0].contentDetails.relatedPlaylists.uploads
 }
 
-interface YoutubeThumbnail {
-	url: string
-	width: number
-	height: number
-}
-
-interface YoutubeThumbnails {
-	default: YoutubeThumbnail
-	medium: YoutubeThumbnail
-	high: YoutubeThumbnail
-	standard?: YoutubeThumbnail
-	maxres?: YoutubeThumbnail
-}
-
-export interface TubbyThumbs {
-	small: string
-	medium: string
-	large: string
-	huge?: string
-	full?: string
-	biggest: string
-}
-
-const extractThumbs = (thumbnails: YoutubeThumbnails): TubbyThumbs => {
-	const small = thumbnails.default.url
-	const medium = thumbnails.medium.url
-	const large = thumbnails.high ? thumbnails.high.url : null
-	const huge = thumbnails.standard ? thumbnails.standard.url : null
-	const full = thumbnails.maxres ? thumbnails.maxres.url : null
-	const biggest = full || huge || large || medium || small
-	return {small, medium, large, huge, full, biggest}
-}
-
 /**
  * Get all videos in a playlist ('upload' playlist is a list of all videos)
  * - sequentially read all paginated videos — *every single one of them*
  * - it can take awhile, i found a quarter second per round trip — 50 videos per trip
  * - you can render videos as they load realtime by providing an 'onVideosReceived' callback
  */
-export async function getAllVideos(
-	opts: CommonRequestOptions & {
-		playlistId: string;
-		paginationLimit?: number
-		data?: any;
-		onVideosReceived?: (videos: Video[]) => void
-	}
-): Promise<Video[]> {
+export async function getAllVideos(opts: GetAllVideosOptions): Promise<Video[]> {
 	const {playlistId, data: moreData, onVideosReceived, paginationLimit = 50, ...options} = opts
 	
 	let allVideos: Video[] = []
@@ -183,7 +213,7 @@ export async function getAllVideos(
 			videoId: item.snippet.resourceId.videoId,
 			title: item.snippet.title,
 			description: item.snippet.description,
-			thumbs: extractThumbs(item.snippet.thumbnails)
+			thumbs: convertToTubbyThumbs(item.snippet.thumbnails)
 		}))
 
 		// fire realtime 'onVideosReceived' callback

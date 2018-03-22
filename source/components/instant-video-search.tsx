@@ -3,10 +3,10 @@ import {h, Component} from "preact"
 import {observer} from "mobx-preact"
 import {observable, computed, autorun, action} from "mobx"
 
+import {Video} from "../tubby"
+
 import SearchBar, {SearchBarStore} from "./search-bar"
 import VideoGrid, {VideoGridStore} from "./video-grid"
-
-import {Video} from "../tubby"
 
 export class InstantVideoSearchStore {
 	@observable videos: Video[] = []
