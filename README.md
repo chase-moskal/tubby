@@ -45,6 +45,24 @@ a collection of frontend javascript code, ui components, and stylesheets to prov
 		- `fetchParams` {RequestInit} [optional] — params passed to `fetch`
 	- returns: promise (playlistId)
 
+> #### tubby video object format
+>
+> ```typescript
+> export interface Video {
+> 	videoId: string
+> 	title: string
+> 	description: string
+> 	thumbs: {
+> 		small: string
+> 		medium: string
+> 		large: string
+> 		huge?: string
+> 		full?: string
+> 		biggest: string
+> 	}
+> }
+> ```
+
 ### module usage
 
 ```javascript
