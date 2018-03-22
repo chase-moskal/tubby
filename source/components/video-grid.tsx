@@ -23,7 +23,7 @@ export default class VideoGrid extends Component<{store: VideoGridStore}, any> {
 					<li style={`background-image: url("${video.thumbs.small}")`}>
 						<a target="_blank" href={`https://youtube.com/watch?v=${video.videoId}`}>
 							<p><strong>{video.title}</strong></p>
-							<p><small>{video.description.substring(0, 280)}</small></p>
+							<p><small>{video.description.substring(0, 280) + "..."}</small></p>
 						</a>
 					</li>
 				)}

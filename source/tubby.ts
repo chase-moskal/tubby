@@ -88,11 +88,7 @@ export interface Video {
 	videoId: string
 	title: string
 	description: string
-	thumbs: {
-		small: string
-		medium: string
-		large: string
-	}
+	thumbs: TubbyThumbs
 }
 
 /**
@@ -107,6 +103,36 @@ export async function getChannelUploadsPlaylistId(opts: CommonRequestOptions & {
 	})
 	return response.items[0].contentDetails.relatedPlaylists.uploads
 }
+
+interface YoutubeThumbnail {
+	url: string
+	width: number
+	height: number
+}
+
+interface YoutubeThumbnails {
+	default: YoutubeThumbnail
+	medium: YoutubeThumbnail
+	high: YoutubeThumbnail
+	standard?: YoutubeThumbnail
+	maxres?: YoutubeThumbnail
+}
+
+export interface TubbyThumbs {
+	small: string
+	medium: string
+	large: string
+	huge?: string
+	full?: string
+}
+
+const extractThumbs = (thumbnails: YoutubeThumbnails): TubbyThumbs => ({
+	small: thumbnails.default.url,
+	medium: thumbnails.medium.url,
+	large: thumbnails.high.url,
+	huge: thumbnails.standard ? thumbnails.standard.url : null,
+	full: thumbnails.maxres ? thumbnails.maxres.url : null
+})
 
 /**
  * Get all videos in a playlist ('upload' playlist is a list of all videos)
@@ -154,11 +180,7 @@ export async function getAllVideos(
 			videoId: item.snippet.resourceId.videoId,
 			title: item.snippet.title,
 			description: item.snippet.description,
-			thumbs: {
-				small: item.snippet.thumbnails.default.url,
-				medium: item.snippet.thumbnails.medium.url,
-				large: item.snippet.thumbnails.high.url
-			}
+			thumbs: extractThumbs(item.snippet.thumbnails)
 		}))
 
 		// fire realtime 'onVideosReceived' callback
