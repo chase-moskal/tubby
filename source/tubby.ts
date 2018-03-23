@@ -60,10 +60,13 @@ export interface TubbyThumbs {
  * Tubby-formatted youtube video
  */
 export interface Video {
+	numeral: number
 	videoId: string
+	watchLink: string
 	title: string
 	description: string
 	thumbs: TubbyThumbs
+	latest: boolean
 }
 
 export interface GetAllVideosOptions extends CommonRequestOptions {
@@ -182,7 +185,8 @@ export async function getChannelUploadsPlaylistId(opts: GetChannelUploadsPlaylis
  */
 export async function getAllVideos(opts: GetAllVideosOptions): Promise<Video[]> {
 	const {playlistId, data: moreData, onVideosReceived, paginationLimit = 50, ...options} = opts
-	
+
+	let count = 0
 	let allVideos: Video[] = []
 	let nextPageToken: string
 	let go: boolean = true
@@ -208,13 +212,21 @@ export async function getAllVideos(opts: GetAllVideosOptions): Promise<Video[]> 
 			...options
 		})
 
+		const totalNumberOfVideos = response.pageInfo.totalResults
+
 		// extract videos from the response
-		const newVideos = response.items.map((item): Video => ({
-			videoId: item.snippet.resourceId.videoId,
-			title: item.snippet.title,
-			description: item.snippet.description,
-			thumbs: convertToTubbyThumbs(item.snippet.thumbnails)
-		}))
+		const newVideos = response.items.map((item): Video => {
+			const numeral = totalNumberOfVideos - (count++)
+			return {
+				numeral,
+				videoId: item.snippet.resourceId.videoId,
+				watchLink: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`,
+				title: item.snippet.title,
+				description: item.snippet.description,
+				thumbs: convertToTubbyThumbs(item.snippet.thumbnails),
+				latest: numeral === totalNumberOfVideos
+			}
+		})
 
 		// fire realtime 'onVideosReceived' callback
 		if (onVideosReceived) onVideosReceived(newVideos)
