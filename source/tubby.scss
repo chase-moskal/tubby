@@ -40,32 +40,16 @@ $tubby-focusoutline: 3px solid $tubby-highlightcolor;
 			margin-top: 0.5em;
 		}
 
-		.video-display { // list item
+		& > li {
+			position: relative;
 			flex: 1 1 0;
 			min-width: 350px;
 			max-width: 640px;
 			min-height: 160px;
 			margin: 0.5em;
-			background-size: cover;
-			background-position: center center;
-			position: relative;
 
-			&::before {
-				content: "";
-				display: block;
+			.video-display {
 				z-index: 1;
-				position: absolute;
-				top: 0; left: 0;
-				width: 100%; height: 100%;
-				background: rgba(25,25,25, 0.7);
-				background: linear-gradient(to bottom right,
-					rgba(25,25,25, 0.95) 32%,
-					rgba(25,25,25, 0.1)
-				);
-			}
-
-			& > a {
-				z-index: 2;
 				position: relative;
 				display: block;
 				padding: 0.5em 1em;
@@ -76,8 +60,25 @@ $tubby-focusoutline: 3px solid $tubby-highlightcolor;
 				text-decoration: none;
 				cursor: pointer;
 				outline: 3px solid transparent;
+				background-size: cover;
+				background-position: center center;
+
 				&:hover, &:focus {
 					outline-color: $tubby-highlightcolor;
+				}
+
+				&::before {
+					content: "";
+					display: block;
+					z-index: -1;
+					position: absolute;
+					top: 0; left: 0;
+					width: 100%; height: 100%;
+					background: rgba(25,25,25, 0.7);
+					background: linear-gradient(to bottom right,
+						rgba(25,25,25, 0.95) 32%,
+						rgba(25,25,25, 0.1)
+					);
 				}
 			}
 
@@ -86,11 +87,13 @@ $tubby-focusoutline: 3px solid $tubby-highlightcolor;
 				font-weight: bold;
 			}
 
-			p { line-height: 1.1em; }
+			p {
+				line-height: 1.1em;
+			}
 		}
 
 		@media (max-width: 400px) {
-			&, li {
+			&, & > li {
 				display: block;
 				width: 100%;
 				min-width: unset;
@@ -101,7 +104,7 @@ $tubby-focusoutline: 3px solid $tubby-highlightcolor;
 				padding-left: 0;
 				padding-right: 0;
 			}
-			li {
+			& > li {
 				margin-bottom: 0.5em;
 			}
 		}
