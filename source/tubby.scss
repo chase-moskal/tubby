@@ -26,6 +26,57 @@ $tubby-focusoutline: 3px solid $tubby-highlightcolor;
 		}
 	}
 
+	.video-display {
+		z-index: 1;
+		position: relative;
+		display: block;
+		padding: 0.5em 1em;
+		padding-bottom: 2em;
+		min-height: 200px;
+		overflow: hidden;
+		text-decoration: none;
+		cursor: pointer;
+		outline: 3px solid transparent;
+		background-size: cover;
+		background-position: center center;
+
+		color: white;
+
+		&:hover, &:focus {
+			outline-color: $tubby-highlightcolor;
+		}
+
+		&::before {
+			content: "";
+			display: block;
+			z-index: -1;
+			position: absolute;
+			top: 0; left: 0;
+			width: 100%; height: 100%;
+			background: rgba(25,25,25, 0.7);
+			background: linear-gradient(to bottom right,
+				rgba(25,25,25, 0.95) 32%,
+				rgba(25,25,25, 0.1)
+			);
+		}
+
+		& > div {
+			line-height: 1.1em;
+		}
+
+		.video-title {
+			margin: 0.5em 0;
+
+			.video-numeral {
+				display: block;
+			}
+
+			.video-titletext {
+				font-weight: bold;
+			}
+		}
+	}
+
 	.video-grid { // ordered list
 		display: flex;
 		flex-wrap: wrap;
@@ -47,49 +98,6 @@ $tubby-focusoutline: 3px solid $tubby-highlightcolor;
 			max-width: 640px;
 			min-height: 160px;
 			margin: 0.5em;
-
-			.video-display {
-				z-index: 1;
-				position: relative;
-				display: block;
-				padding: 0.5em 1em;
-				padding-bottom: 2em;
-				min-height: 200px;
-				overflow: hidden;
-				color: white;
-				text-decoration: none;
-				cursor: pointer;
-				outline: 3px solid transparent;
-				background-size: cover;
-				background-position: center center;
-
-				&:hover, &:focus {
-					outline-color: $tubby-highlightcolor;
-				}
-
-				&::before {
-					content: "";
-					display: block;
-					z-index: -1;
-					position: absolute;
-					top: 0; left: 0;
-					width: 100%; height: 100%;
-					background: rgba(25,25,25, 0.7);
-					background: linear-gradient(to bottom right,
-						rgba(25,25,25, 0.95) 32%,
-						rgba(25,25,25, 0.1)
-					);
-				}
-			}
-
-			.video-title {
-				margin: 0.5em 0;
-				font-weight: bold;
-			}
-
-			p {
-				line-height: 1.1em;
-			}
 		}
 
 		@media (max-width: 400px) {
@@ -155,6 +163,23 @@ html.tubbydemo {
 		&:visited { color: $linkcolor; }
 		&:hover, &:focus { color: darken($linkcolor, 2%); text-decoration: underline; }
 		&:active { color: darken($linkcolor, 4%); }
+		&.video-display {
+			color: inherit;
+			text-decoration: inherit;
+		}
+	}
+
+	.video-display {
+		.video-numeral {
+			&::before {
+				content: "Episode #";
+				display: inline;
+			}
+			opacity: 0.5;
+			display: block;
+			font-size: 0.8em;
+			padding-left: 0.2em;
+		}
 	}
 
 	h1, h2 {
