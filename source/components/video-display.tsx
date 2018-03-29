@@ -24,7 +24,7 @@ export class VideoDisplayStore {
 }
 
 @observer
-export default class VideoDisplay<Store extends VideoDisplayStore = VideoDisplayStore> extends Component<{store: Store}, any> {
+export default class VideoDisplay extends Component<{store: VideoDisplayStore}, any> {
 
 	protected renderTitle() {
 		const {title, numeral} = this.props.store.video
@@ -45,10 +45,14 @@ export default class VideoDisplay<Store extends VideoDisplayStore = VideoDisplay
 		)
 	}
 
+	protected selectCoverThumb() {
+		return this.props.store.video.thumbs.medium
+	}
+
 	protected renderCoverAttributes() {
 		const {video} = this.props.store
 		return {
-			style: {"background-image": `url("${video.thumbs.small}")`},
+			style: {"background-image": `url("${this.selectCoverThumb()}")`},
 			"data-latest": video.latest ? "true" : "false"
 		}
 	}

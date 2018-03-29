@@ -4,11 +4,11 @@ import {observer} from "mobx-preact"
 import {observable, action} from "mobx"
 
 import {Video} from "../tubby"
-import DefaultVideoDisplay, {VideoDisplayStore} from "./video-display"
+import VideoDisplay, {VideoDisplayStore} from "./video-display"
 
 export class VideoGridStore {
 	@observable videoDisplayStores: VideoDisplayStore[] = []
-	@observable VideoDisplay: typeof DefaultVideoDisplay = DefaultVideoDisplay
+	@observable VideoDisplayComponent: typeof VideoDisplay = VideoDisplay
 
 	@action setVideos(videos: Video[]) {
 		this.videoDisplayStores = videos.map(video => new VideoDisplayStore({video}))
@@ -18,20 +18,20 @@ export class VideoGridStore {
 		this.videoDisplayStores = stores
 	}
 
-	@action setVideoDisplayComponent(VideoDisplay: typeof DefaultVideoDisplay) {
-		this.VideoDisplay = VideoDisplay
+	@action setVideoDisplayComponent(VideoDisplayComponent: typeof VideoDisplay) {
+		this.VideoDisplayComponent = VideoDisplayComponent
 	}
 }
 
 @observer
 export default class VideoGrid extends Component<{store: VideoGridStore}, any> {
 	render() {
-		const {videoDisplayStores, VideoDisplay} = this.props.store
+		const {videoDisplayStores, VideoDisplayComponent} = this.props.store
 		return (
 			<ol {...{reversed: "reversed"}} className="video-grid">
 				{videoDisplayStores.map(store => (
 					<li>
-						<VideoDisplay {...{store}}/>
+						<VideoDisplayComponent {...{store}}/>
 					</li>
 				))}
 			</ol>
