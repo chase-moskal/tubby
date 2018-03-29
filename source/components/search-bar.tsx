@@ -22,6 +22,8 @@ export class SearchBarStore {
 
 	@observable searchables: Searchable[]
 
+	@observable placeholder: string = "search videos"
+
 	@computed get searchTerms(): string[] {
 		return this.textInput.split(/\s+/).filter(term => !!term)
 	}
@@ -63,7 +65,7 @@ export default class SearchBar extends Component<{store: SearchBarStore}, any> {
 			<div className="search-bar">
 				<input
 					type="text"
-					placeholder="search videos"
+					placeholder={store.placeholder}
 					onChange={this.updateTextInput}
 					onKeyUp={this.updateTextInput}
 					/>
