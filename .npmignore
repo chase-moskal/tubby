@@ -1,6 +1,7 @@
 
-.vscode
-coverage
-source
+/.vscode
+/coverage
+/source
 
-tsconfig.json
+/tsconfig.json
+/*.tgz
