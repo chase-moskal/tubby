@@ -1,6 +1,6 @@
 {
 	"name": "tubby",
-	"version": "0.1.13",
+	"version": "0.2.0-dev.0",
 	"description": "youtube channel instant search",
 	"keywords": [
 		"youtube",
@@ -14,7 +14,7 @@
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"license": "ISC",
 	"scripts": {
-		"prepare": "node ./build",
+		"prepare": "node build",
 		"start": "http-server",
 		"test": "exit 0"
 	},
@@ -33,6 +33,7 @@
 		"mkdirp": "0.5.1",
 		"mobx": "4.1.1",
 		"mobx-preact": "2.0.0",
+		"node-fetch": "2.1.2",
 		"node-sass": "4.7.2",
 		"npm-run-all": "4.1.2",
 		"preact": "8.2.7",

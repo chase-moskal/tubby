@@ -17,6 +17,7 @@ BUILD SCRIPT CLI
 
 const commander = require("commander")
 const {rm, cat, mkdir, exec} = require("shelljs")
+const downloadCannedVideos = require("./download-canned-videos")
 
 commander
 	.option("-d, --debug", "create a debuggable bundle")
@@ -31,19 +32,24 @@ const buildOptions = {
 		scriptBundle: "dist/tubby.global.bundle.js",
 		styleSource: "source/tubby.scss",
 		styleOutput: "dist/tubby.css"
+	},
+	cannedVideoOptions: {
+		target: "dist/canned-videos.json",
+		apiKey: "AIzaSyDeHpB9W14feQs8myoWgFAZOCrDeKMLRwE", // "Tubby Demo Key"
+		playlistId: "UUL_f53ZEJxp8TtlOkHwMV9Q" // 'uploads' playlist (all videos)
 	}
 }
 
 /**
  * Build routine
  */
-function build({debug, paths, sassWatch}) {
+async function build({debug, paths, sassWatch, cannedVideoOptions}) {
 	const {scriptSource, scriptBundle, styleSource, styleOutput} = paths
 	const nb = "$(npm bin)/"
-	const s = {silent: true}
+	process.env.FORCE_COLOR = true
+	const s = {silent: true, env: process.env}
 
 	if (sassWatch) {
-		process.env.FORCE_COLOR = true
 		exec(
 			nb + `node-sass --watch --source-map true ${styleSource} ${styleOutput}`,
 			{env: process.env}
@@ -60,6 +66,9 @@ function build({debug, paths, sassWatch}) {
 
 	// run sass compiler
 	exec(nb + `node-sass --source-map true ${styleSource} ${styleOutput}`, s)
+
+	// download the canned videos
+	downloadCannedVideos(cannedVideoOptions)
 
 	/**
 	 * Debug build is easier to debug
