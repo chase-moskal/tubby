@@ -19,9 +19,7 @@ export interface Searchable {
 export class SearchBarStore {
 
 	@observable textInput: string = ""
-
 	@observable searchables: Searchable[]
-
 	@observable placeholder: string = "search videos"
 
 	@computed get searchTerms(): string[] {

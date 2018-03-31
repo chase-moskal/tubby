@@ -10,6 +10,7 @@ import VideoGrid, {VideoGridStore} from "./video-grid"
 
 export class InstantVideoSearchStore {
 	@observable videos: Video[] = []
+	@observable blink: boolean = false
 	@observable searchBarStore: SearchBarStore = new SearchBarStore()
 	@observable videoGridStore: VideoGridStore = new VideoGridStore()
 
@@ -37,6 +38,13 @@ export class InstantVideoSearchStore {
 		}))
 	}
 
+	@action private setBlink(blink: boolean) {
+		this.blink = blink
+	}
+
+	// to debounce blinking
+	private blinking: boolean = false
+
 	constructor() {
 
 		// convert videos into searchables
@@ -50,6 +58,19 @@ export class InstantVideoSearchStore {
 			const videos = [...this.videoResults]
 			this.videoGridStore.setVideos(videos)
 		})
+
+		// blinking attribute for each search
+		autorun(() => {
+			const videos = [...this.videoResults]
+			if (videos && !this.blinking) {
+				this.blinking = true
+				this.setBlink(true)
+				setTimeout(() => {
+					this.setBlink(false)
+					this.blinking = false
+				}, 200)
+			}
+		})
 	}
 }
 
@@ -59,7 +80,7 @@ export default class InstantVideoSearch extends Component<{store: InstantVideoSe
 	render() {
 		const {store} = this.props
 		return (
-			<div className="instant-video-search">
+			<div className="instant-video-search" data-blink={store.blink ? "true" : "false"}>
 				<SearchBar store={store.searchBarStore}/>
 				<div class="search-info">
 					<p class="results">{store.videoResults.length} result{
