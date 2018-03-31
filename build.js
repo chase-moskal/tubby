@@ -17,7 +17,6 @@ BUILD SCRIPT CLI
 
 const commander = require("commander")
 const {rm, cat, mkdir, exec} = require("shelljs")
-const downloadCannedVideos = require("./download-canned-videos")
 
 commander
 	.option("-d, --debug", "create a debuggable bundle")
@@ -68,7 +67,7 @@ async function build({debug, paths, sassWatch, cannedVideoOptions}) {
 	exec(nb + `node-sass --source-map true ${styleSource} ${styleOutput}`, s)
 
 	// download the canned videos
-	downloadCannedVideos(cannedVideoOptions)
+	require("./download-canned-videos")(cannedVideoOptions)
 
 	/**
 	 * Debug build is easier to debug
