@@ -10,6 +10,7 @@ export interface CommonRequestOptions {
 	apiKey: string
 	apiEndpoint?: string
 	fetchParams?: RequestInit
+	fetch?: typeof fetch
 }
 
 /**
@@ -141,7 +142,7 @@ export const convertToTubbyThumbs = (thumbnails: YoutubeThumbnails): TubbyThumbs
  */
 export async function youtubeGetRequest(opts: RequestOptions): Promise<YoutubeResponse> {
 	const options = {...defaultRequestOptions, ...opts}
-	let {apiKey, apiEndpoint, fetchParams, resource, data} = options
+	let {apiKey, apiEndpoint, fetchParams, resource, data, fetch = window.fetch} = options
 	if (!apiKey) throw new Error("missing param 'apiKey' is required")
 
 	// ensure api key is properly set in data
