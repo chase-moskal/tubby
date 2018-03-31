@@ -13,6 +13,7 @@ export class InstantVideoSearchStore {
 	@observable blink: boolean = false
 	@observable searchBarStore: SearchBarStore = new SearchBarStore()
 	@observable videoGridStore: VideoGridStore = new VideoGridStore()
+	@observable blinkDuration: number = 400
 
 	// correlate searchbar store results with videos
 	@computed get videoResults(): Video[] {
@@ -68,7 +69,7 @@ export class InstantVideoSearchStore {
 				setTimeout(() => {
 					this.setBlink(false)
 					this.blinking = false
-				}, 200)
+				}, this.blinkDuration)
 			}
 		})
 	}
@@ -83,11 +84,13 @@ export default class InstantVideoSearch extends Component<{store: InstantVideoSe
 			<div className="instant-video-search" data-blink={store.blink ? "true" : "false"}>
 				<SearchBar store={store.searchBarStore}/>
 				<div class="search-info">
-					<p class="results">{store.videoResults.length} result{
-						store.videoResults.length === 1
-							? ""
-							: "s"
-					}</p>
+					<p class="results" style={{transitionDuration: `${store.blinkDuration}ms`}}>
+						{store.videoResults.length} result{
+							store.videoResults.length === 1
+								? ""
+								: "s"
+						}
+					</p>
 				</div>
 				<VideoGrid store={store.videoGridStore}/>
 			</div>

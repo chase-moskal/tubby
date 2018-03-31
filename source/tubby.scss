@@ -136,7 +136,7 @@ $tubby-focusoutline: 3px solid $tubby-highlightcolor;
 			padding: 0.05em 0.2em;
 			border-radius: 3px;
 			background: rgba(255,255,255, 0);
-			transition: background 100ms linear;
+			transition: background 400ms linear;
 		}
 		
 		&[data-blink="true"] {
