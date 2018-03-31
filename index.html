@@ -50,17 +50,27 @@
 				document.querySelector(".landing-zone")
 			)
 
-			tubby.getAllVideos({
-				apiKey,
-				playlistId,
-				onVideosReceived: function(videos) {
-					instantVideoSearchStore.videos = instantVideoSearchStore.videos.concat(videos)
-					console.log("tubby returned " + instantVideoSearchStore.videos.length + " videos after " + (Date.now() - clock) + " ms")
-				}
-			})
-			.then(function(videos) {
-				console.log("tubby finished all " + videos.length + " videos after " + (Date.now() - clock) + " ms")
-			})
+			fetch("dist/canned-videos.json")
+
+				.then(function(response) {
+					return response.json()
+				})
+
+				.then(function(cannedVideos) {
+					return tubby.getAllVideos({
+						apiKey,
+						playlistId,
+						cannedVideos,
+						onVideosReceived: function(videos) {
+							instantVideoSearchStore.videos = instantVideoSearchStore.videos.concat(videos)
+							console.log("tubby returned " + instantVideoSearchStore.videos.length + " videos after " + (Date.now() - clock) + " ms")
+						}
+					})
+				})
+
+				.then(function(videos) {
+					console.log("tubby finished all " + videos.length + " videos after " + (Date.now() - clock) + " ms")
+				})
 
 			// // if you only have the channel id, this method is equivalent but slower (one extra round trip)
 			// tubby.getAllVideosForChannel({apiKey, channelId, onVideosReceived})

@@ -5,7 +5,7 @@ const tubby = require("./dist/tubby")
 const fetch = require("node-fetch")
 const {writeFile} = require("fs")
 
-module.exports = async function downloadCannedVideos({
+module.exports = function downloadCannedVideos({
 	target,
 	apiKey,
 	playlistId,
@@ -22,7 +22,11 @@ module.exports = async function downloadCannedVideos({
 		playlistId
 	})
 	.then(function(videos) {
-		writeFile(target, JSON.stringify(videos), err => {})
+		writeFile(
+			target,
+			JSON.stringify(videos),
+			err => err && console.error(err)
+		)
 		return videos
 	})
 }

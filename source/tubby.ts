@@ -75,6 +75,7 @@ export interface GetAllVideosOptions extends CommonRequestOptions {
 	paginationLimit?: number
 	data?: any;
 	onVideosReceived?: (videos: Video[]) => void
+	cannedVideos?: Video[]
 }
 
 export interface GetAllVideosForChannelOptions extends CommonRequestOptions {
@@ -185,12 +186,21 @@ export async function getChannelUploadsPlaylistId(opts: GetChannelUploadsPlaylis
  * - you can render videos as they load realtime by providing an 'onVideosReceived' callback
  */
 export async function getAllVideos(opts: GetAllVideosOptions): Promise<Video[]> {
-	const {playlistId, data: moreData, onVideosReceived, paginationLimit = 50, ...options} = opts
+	const {
+		playlistId,
+		data: moreData,
+		onVideosReceived,
+		paginationLimit = 50,
+		cannedVideos = null,
+		...options
+	} = opts
 
 	let count = 0
-	let allVideos: Video[] = []
+	let allVideos: Video[] = cannedVideos ? cannedVideos : []
 	let nextPageToken: string
 	let go: boolean = true
+
+	if (onVideosReceived && allVideos.length) onVideosReceived(allVideos)
 
 	// loop over every page to receive all results
 	while (go) {
@@ -229,17 +239,26 @@ export async function getAllVideos(opts: GetAllVideosOptions): Promise<Video[]> 
 			}
 		})
 
+		let canOpened = false
+		const freshVideos = newVideos.filter(video => {
+			const match = allVideos.find(v => v.videoId === video.videoId)
+			if (match) {
+				canOpened = true
+			}
+			return !match
+		})
+
 		// fire realtime 'onVideosReceived' callback
-		if (onVideosReceived) onVideosReceived(newVideos)
+		if (onVideosReceived) onVideosReceived(freshVideos)
 
 		// add to videos list
-		allVideos = [...allVideos, ...newVideos]
+		allVideos = [...allVideos, ...freshVideos]
 
 		// queue up the next page of video results
 		nextPageToken = response.nextPageToken
 
 		// we're done when there are no more pages
-		if (!nextPageToken) go = false
+		if (!nextPageToken || canOpened) go = false
 	}
 
 	// return all of the gathered videos

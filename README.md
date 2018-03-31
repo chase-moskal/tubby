@@ -23,6 +23,7 @@ a collection of frontend javascript code, ui components, and stylesheets to prov
 	- options object:
 		- `apiKey` {string} — google api access key with youtube permissions
 		- `playlistId` {string} — youtube playlist id
+		- `cannedVideos` {array of video objects} [optional] — canned videos to save youtube api requests
 		- `paginationLimit` {string} [optional] — how many results to fetch each roundtrip (youtube max 50)
 		- `apiEndpoint` {string} [optional] — youtube api access point url
 		- `fetchParams` {RequestInit} [optional] — params passed to `fetch`
@@ -165,3 +166,12 @@ tubby.getAllVideos({
 	})
 </script>
 ```
+
+### canning videos to save api requests
+
+***tubby.*** **`getAllVideos(options)`** — now accepts `cannedVideos` array
+
+- tubby now has a serverside node module, `download-canned-videos.js`, which you can use to download videos into a canned json file
+- the client can grab that json file, and stops making youtube api requests after duplicate (canned) videos are encountered
+- canned videos can be passed right into getAllVideos as a parameter, it's optional
+- this optimizes api usage by reducing redundant calls -- now only one call is guaranteed, which checks for new videos
