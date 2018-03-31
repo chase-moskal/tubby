@@ -31,7 +31,9 @@
 		"preact": "8.*"
 	},
 	"devDependencies": {
+		"array.find": "1.0.7",
 		"browserify": "16.1.1",
+		"commander": "2.15.1",
 		"envify": "4.1.0",
 		"es6-promise": "4.2.4",
 		"http-server": "0.11.1",
@@ -42,6 +44,7 @@
 		"npm-run-all": "4.1.2",
 		"preact": "8.2.7",
 		"rimraf": "2.6.2",
+		"shelljs": "0.8.1",
 		"tsify": "3.0.4",
 		"typescript": "2.7.2",
 		"uglify-es": "3.3.9",
