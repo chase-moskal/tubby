@@ -5,7 +5,7 @@ import {observable, computed, autorun, action} from "mobx"
 
 import {Video} from "../tubby"
 
-import SearchBar, {SearchBarStore} from "./search-bar"
+import SearchBar, {SearchBarStore, Searchable} from "./search-bar"
 import VideoGrid, {VideoGridStore} from "./video-grid"
 
 export class InstantVideoSearchStore {
@@ -25,18 +25,24 @@ export class InstantVideoSearchStore {
 		this.videos = [...videos]
 	}
 
+	protected procureSearchables(videos: Video[]): Searchable[] {
+		return videos.map((video, index) => ({
+			index,
+			content: [
+				video.title,
+				video.description,
+				`#${video.numeral}`,
+				video.videoId
+			].join(", ")
+		}))
+	}
+
 	constructor() {
 
 		// convert videos into searchables
 		autorun(() => {
 			const videos = [...this.videos]
-			this.searchBarStore.setSearchables(videos.map((video, index) => ({
-				index,
-				content: [
-					video.title,
-					video.description
-				].join(", ")
-			})))
+			this.searchBarStore.setSearchables(this.procureSearchables(videos))
 		})
 
 		// display results in video grid
