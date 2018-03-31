@@ -34,6 +34,8 @@
 				<div class="landing-zone"></div>
 			</section>
 		</main>
+		<script src="node_modules/es6-promise/dist/es6-promise.auto.min.js"></script>
+		<script src="node_modules/whatwg-fetch/fetch.js"></script>
 		<script src="dist/tubby.global.bundle.js"></script>
 		<script>
 			mobx.configure({useStrict: true})
@@ -51,13 +53,13 @@
 			tubby.getAllVideos({
 				apiKey,
 				playlistId,
-				onVideosReceived: videos => {
-					instantVideoSearchStore.videos = [...instantVideoSearchStore.videos, ...videos]
-					console.log(`tubby returned ${instantVideoSearchStore.videos.length} videos after ${Date.now() - clock} ms`)
+				onVideosReceived: function(videos) {
+					instantVideoSearchStore.videos = instantVideoSearchStore.videos.concat(videos)
+					console.log("tubby returned " + instantVideoSearchStore.videos.length + " videos after " + (Date.now() - clock) + " ms")
 				}
 			})
-			.then(videos => {
-				console.log(`tubby finished all ${videos.length} videos after ${Date.now() - clock} ms`)
+			.then(function(videos) {
+				console.log("tubby finished all " + videos.length + " videos after " + (Date.now() - clock) + " ms")
 			})
 
 			// // if you only have the channel id, this method is equivalent but slower (one extra round trip)
