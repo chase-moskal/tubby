@@ -1,6 +1,6 @@
 {
 	"name": "tubby",
-	"version": "0.2.0-dev.1",
+	"version": "0.2.0",
 	"description": "youtube channel instant search",
 	"keywords": [
 		"youtube",
@@ -23,17 +23,19 @@
 		"mobx-preact": "2.*",
 		"preact": "8.*"
 	},
+	"dependencies": {
+		"commander": "2.15.1",
+		"node-fetch": "2.1.2"
+	},
 	"devDependencies": {
 		"array.find": "1.0.7",
 		"browserify": "16.1.1",
-		"commander": "2.15.1",
 		"envify": "4.1.0",
 		"es6-promise": "4.2.4",
 		"http-server": "0.11.1",
 		"mkdirp": "0.5.1",
 		"mobx": "4.1.1",
 		"mobx-preact": "2.0.0",
-		"node-fetch": "2.1.2",
 		"node-sass": "4.7.2",
 		"npm-run-all": "4.1.2",
 		"preact": "8.2.7",

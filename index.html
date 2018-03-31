@@ -1,82 +1,97 @@
 <!doctype html>
 <html class="tubby tubbydemo">
-	<head>
-		<meta charset="utf-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<title>tubby — youtube channel instant search</title>
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton:400,800"/>
-		<link rel="stylesheet" href="dist/tubby.css"/>
-	</head>
-	<body>
-		<header class="siteheader slice">
-			<h1>
-				<strong>tubby</strong>
-				<span>— youtube channel instant search</span>
-			</h1>
-			<div>
-				<p>sourcecode at <a href="https://github.com/chase-moskal/tubby">github.com/chase-moskal/tubby</a></p>
-				<p>by <a href="https://chasemoskal.com">chase moskal</a></p>
-			</div>
-		</header>
-		<main class="slice">
-			<section class="textcontent">
-				<h2>tubby is some frontend tech for web developers</h2>
-				<ul>
-					<li>tubby is a user interface for instant-searching (as-you-type) through a youtube channel's whole public catalog of videos</li>
-					<li>tubby has preact components which use mobx for state management</li>
-					<li>tubby's main javascript module has some functions to fetch a youtube channel's entire video catalog</li>
-					<li>tubby is written in typescript</li>
-					<li>tubby is free and open source <a href="https://github.com/chase-moskal/tubby">on github</a></li>
-				</ul>
-			</section>
-			<section>
-				<h2>demo featuring <a href="https://www.youtube.com/user/JordanPetersonVideos">jordan b peterson's youtube channel</a></h2>
-				<div class="landing-zone"></div>
-			</section>
-		</main>
-		<script src="node_modules/es6-promise/dist/es6-promise.auto.min.js"></script>
-		<script src="node_modules/whatwg-fetch/fetch.js"></script>
-		<script src="dist/tubby.global.bundle.js"></script>
-		<script>
-			mobx.configure({useStrict: true})
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>tubby — youtube channel instant search</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton:400,800"/>
+	<link rel="stylesheet" href="dist/tubby.css"/>
+</head>
+<body>
 
-			const apiKey = "AIzaSyDeHpB9W14feQs8myoWgFAZOCrDeKMLRwE" // "Tubby Demo Key"
-			const playlistId = "UUL_f53ZEJxp8TtlOkHwMV9Q" // 'uploads' playlist (all videos)
-			const clock = Date.now() // to log time measurement to console
+	<header class="siteheader slice">
+		<h1>
+			<strong>tubby</strong>
+			<span>— youtube channel instant search</span>
+		</h1>
+		<div>
+			<p>sourcecode at <a href="https://github.com/chase-moskal/tubby">github.com/chase-moskal/tubby</a></p>
+			<p>by <a href="https://chasemoskal.com">chase moskal</a></p>
+		</div>
+	</header>
 
-			const instantVideoSearchStore = new tubby.components.InstantVideoSearchStore();
-			preact.render(
-				preact.h(tubby.components.InstantVideoSearch, {store: instantVideoSearchStore}),
-				document.querySelector(".landing-zone")
-			)
+	<main class="slice">
+		<section class="textcontent">
+			<h2>tubby is some frontend tech for web developers</h2>
+			<ul>
+				<li>tubby is a user interface for instant-searching (as-you-type) through a youtube channel's whole public catalog of videos</li>
+				<li>tubby has preact components which use mobx for state management</li>
+				<li>tubby's main javascript module has some functions to fetch a youtube channel's entire video catalog</li>
+				<li>tubby is written in typescript</li>
+				<li>tubby is free and open source <a href="https://github.com/chase-moskal/tubby">on github</a></li>
+			</ul>
+		</section>
+		<section>
+			<h2>demo featuring <a href="https://www.youtube.com/user/JordanPetersonVideos">jordan b peterson's youtube channel</a></h2>
+			<div class="landing-zone"></div>
+		</section>
+	</main>
 
-			fetch("dist/canned-videos.json")
+	<script src="dist/tubby.global.bundle.js"></script>
+	<script>
 
-				.then(function(response) {
-					return response.json()
+		// running mobx state management in strict mode (explicit actions)
+		mobx.configure({useStrict: true})
+
+		const apiKey = "AIzaSyDeHpB9W14feQs8myoWgFAZOCrDeKMLRwE" // google api key "Tubby Demo Key"
+		const playlistId = "UUL_f53ZEJxp8TtlOkHwMV9Q" // youtube 'uploads' playlist id (all videos)
+		const clock = Date.now() // just to log handy timing info to the console
+
+		// create the data store for the preact component
+		const instantVideoSearchStore = new tubby.components.InstantVideoSearchStore();
+
+		// render the preact component on the page
+		preact.render(
+			preact.h(
+				tubby.components.InstantVideoSearch,
+				{store: instantVideoSearchStore}
+			),
+			document.querySelector(".landing-zone")
+		)
+
+		// fetch all of the videos and insert them into the data store
+		fetch("dist/canned-videos.json")
+			.then(function getCannedVideosAsJson(response) {
+				return response.json()
+			})
+			.then(function getAllVideosFromYoutube(cannedVideos) {
+				return tubby.getAllVideos({
+					apiKey,
+					playlistId,
+					cannedVideos,
+					onVideosReceived: function(videos) {
+						instantVideoSearchStore.videos = instantVideoSearchStore
+							.videos.concat(videos)
+						console.log(
+							"tubby returned " + instantVideoSearchStore.videos.length
+								+ " videos after " + (Date.now() - clock) + " ms"
+						)
+					}
 				})
+			})
+			.then(function logWhenAllVideosAreCompleted(videos) {
+				console.log(
+					"tubby finished all " + videos.length + " videos after "
+						+ (Date.now() - clock) + " ms"
+				)
+			})
 
-				.then(function(cannedVideos) {
-					return tubby.getAllVideos({
-						apiKey,
-						playlistId,
-						cannedVideos,
-						onVideosReceived: function(videos) {
-							instantVideoSearchStore.videos = instantVideoSearchStore.videos.concat(videos)
-							console.log("tubby returned " + instantVideoSearchStore.videos.length + " videos after " + (Date.now() - clock) + " ms")
-						}
-					})
-				})
+		// // if you only have the channel id, this method is equivalent but slower (one extra round trip)
+		// tubby.getAllVideosForChannel({apiKey, channelId, onVideosReceived})
 
-				.then(function(videos) {
-					console.log("tubby finished all " + videos.length + " videos after " + (Date.now() - clock) + " ms")
-				})
+		// // if you can't even find the channel id,
+		// //  try this: https://github.com/JohnnyTheTank/youtube-channel-name-converter
+	</script>
 
-			// // if you only have the channel id, this method is equivalent but slower (one extra round trip)
-			// tubby.getAllVideosForChannel({apiKey, channelId, onVideosReceived})
-
-			// // if you can't even find the channel id,
-			// //  try this: https://github.com/JohnnyTheTank/youtube-channel-name-converter
-		</script>
-	</body>
+</body>
 </html>
