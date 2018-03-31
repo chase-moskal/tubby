@@ -1,51 +1,109 @@
 #!/usr/bin/env node
 
+/*
+
+BUILD SCRIPT CLI
+
+	node build
+		produce a production build
+
+	node build --debug
+		produce a debug build
+
+	node build --sassWatch
+		engage a sass compile-on-save watch mode session
+
+*/
+
 const commander = require("commander")
-const {rm, cat, mkdir, exec, echo} = require("shelljs")
-const nb = "$(npm bin)/"
-const s = {silent: true}
+const {rm, cat, mkdir, exec} = require("shelljs")
 
 commander
 	.option("-d, --debug", "create a debuggable bundle")
+	.option("-w, --sassWatch", "sass compile-on-save watcher mode")
 	.parse(process.argv)
 
-const {debug} = commander
+const buildOptions = {
+	debug: commander.debug,
+	sassWatch: commander.sassWatch,
+	paths: {
+		scriptSource: "source/tubby.global.tsx",
+		scriptBundle: "dist/tubby.global.bundle.js",
+		styleSource: "source/tubby.scss",
+		styleOutput: "dist/tubby.css"
+	}
+}
 
-// cleanup
-rm("-rf", "dist")
-mkdir("dist")
+/**
+ * Build routine
+ */
+function build({debug, paths, sassWatch}) {
+	const {scriptSource, scriptBundle, styleSource, styleOutput} = paths
+	const nb = "$(npm bin)/"
+	const s = {silent: true}
 
-// run typescript compiler
-exec(nb + "tsc", s)
+	if (sassWatch) {
+		process.env.FORCE_COLOR = true
+		exec(
+			nb + `node-sass --watch --source-map true ${styleSource} ${styleOutput}`,
+			{env: process.env}
+		)
+		return 0
+	}
 
-// create browserify bundle
-exec(
-	debug
-		? nb + "browserify source/tubby.global.tsx "
-			+ "--debug "
-			+ "-p [ tsify ] "
-			+ "-g uglifyify"
-		: nb + "browserify source/tubby.global.tsx "
-			+ "-p [ tsify ] "
-			+ "-g [ envify --NODE_ENV production ] "
-			+ "-g uglifyify",
-	s
-).to("dist/tubby.global.bundle.unoptimized.js")
+	// cleanup
+	rm("-rf", "dist")
+	mkdir("dist")
 
-// final bundle
-;(debug
-	? cat("dist/tubby.global.bundle.unoptimized.js")
-	: cat(
-		"node_modules/array.find/dist/array-find-polyfill.min.js",
-		"node_modules/es6-promise/dist/es6-promise.auto.min.js",
-		"node_modules/whatwg-fetch/fetch.js",
-		"dist/tubby.global.bundle.unoptimized.js"
-	).exec(nb + "uglifyjs --compress --mangle", s)
-).to("dist/tubby.global.bundle.js")
+	// run typescript compiler
+	exec(nb + "tsc", s)
 
-// output final log message
-console.log(
-	debug
-		? "✔ done debug build"
-		: "✔ done production build"
-)
+	// run sass compiler
+	exec(nb + `node-sass --source-map true ${styleSource} ${styleOutput}`, s)
+
+	/**
+	 * Debug build is easier to debug
+	 */
+	function debugBuild() {
+
+		// create browserify bundle
+		exec(nb + [
+			"browserify " + scriptSource,
+			"--debug",
+			"-p [ tsify ]",
+			"-g uglifyify"
+		].join(" "), s).to(scriptBundle)
+
+		console.log("✔ done debug build")
+	}
+
+	/**
+	 * Production build includes polyfills and is minified
+	 */
+	function productionBuild() {
+
+		// create browserify bundle
+		exec(nb + [
+			"browserify " + scriptSource,
+			"-p [ tsify ]",
+			"-g [ envify --NODE_ENV production ]",
+			"-g uglifyify"
+		].join(" "), s).to(scriptBundle)
+
+		// final production bundle includes polyfills and is minified
+		cat(
+			"node_modules/array.find/dist/array-find-polyfill.min.js",
+			"node_modules/es6-promise/dist/es6-promise.auto.min.js",
+			"node_modules/whatwg-fetch/fetch.js",
+			scriptBundle
+		).exec(nb + "uglifyjs --compress --mangle", s)
+			.to(scriptBundle)
+
+		console.log("✔ done production build")
+	}
+
+	if (debug) debugBuild()
+	else productionBuild()
+}
+
+build(buildOptions)
