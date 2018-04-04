@@ -16,7 +16,7 @@ BUILD SCRIPT CLI
 */
 
 const commander = require("commander")
-const {rm, cat, mkdir, exec} = require("shelljs")
+const {axx, maxx, raxx, waxx, caxx} = require("axx")
 
 commander
 	.option("-d, --debug", "create a debuggable bundle")
@@ -27,10 +27,16 @@ const buildOptions = {
 	debug: commander.debug,
 	sassWatch: commander.sassWatch,
 	paths: {
+		nb: "$(npm bin)/",
 		scriptSource: "source/tubby.global.tsx",
 		scriptBundle: "dist/tubby.global.bundle.js",
 		styleSource: "source/tubby.scss",
-		styleOutput: "dist/tubby.css"
+		styleOutput: "dist/tubby.css",
+		polyfills: [
+			"node_modules/array.find/dist/array-find-polyfill.min.js",
+			"node_modules/es6-promise/dist/es6-promise.auto.min.js",
+			"node_modules/whatwg-fetch/fetch.js"
+		]
 	},
 	cannedVideoOptions: {
 		target: "dist/canned-videos.json",
@@ -39,79 +45,46 @@ const buildOptions = {
 	}
 }
 
-/**
- * Build routine
- */
 async function build({debug, paths, sassWatch, cannedVideoOptions}) {
-	const {scriptSource, scriptBundle, styleSource, styleOutput} = paths
-	const nb = "$(npm bin)/"
+	const {nb, scriptSource, scriptBundle, styleSource, styleOutput, polyfills} = paths
 	process.env.FORCE_COLOR = true
-	const s = {silent: true, env: process.env}
 
-	if (sassWatch) {
-		exec(
-			nb + `node-sass --watch --source-map true ${styleSource} ${styleOutput}`,
-			{env: process.env}
-		)
-		return 0
-	}
+	if (sassWatch)
+		await (axx(`${nb}node-sass --watch --source-map true ${styleSource} ${styleOutput}`, caxx(), {combineStderr: true}).result)
 
-	// cleanup
-	rm("-rf", "dist")
-	mkdir("dist")
+	await axx(`rm -rf dist && mkdir dist`)
+	await Promise.all([
+		axx(`${nb}tsc`).result,
+		axx(`${nb}node-sass --source-map true ${styleSource} ${styleOutput}`).result
+	])
 
-	// run typescript compiler
-	exec(nb + "tsc", s)
-
-	// run sass compiler
-	exec(nb + `node-sass --source-map true ${styleSource} ${styleOutput}`, s)
-
-	// download the canned videos
-	require("./download-canned-videos")(cannedVideoOptions)
-
-	/**
-	 * Debug build is easier to debug
-	 */
-	function debugBuild() {
-
-		// create browserify bundle
-		exec(nb + [
-			"browserify " + scriptSource,
-			"--debug",
-			"-p [ tsify ]",
-			"-g uglifyify"
-		].join(" "), s).to(scriptBundle)
-
+	async function buildDebug() {
+		await (axx(
+			`${nb}browserify ${scriptSource} --debug -p [ tsify ] -g uglifyify`,
+			waxx(scriptBundle)
+		).result)
 		console.log("✔ done debug build")
 	}
 
-	/**
-	 * Production build includes polyfills and is minified
-	 */
-	function productionBuild() {
-
-		// create browserify bundle
-		exec(nb + [
-			"browserify " + scriptSource,
-			"-p [ tsify ]",
-			"-g [ envify --NODE_ENV production ]",
-			"-g uglifyify"
-		].join(" "), s).to(scriptBundle)
-
-		// final production bundle includes polyfills and is minified
-		cat(
-			"node_modules/array.find/dist/array-find-polyfill.min.js",
-			"node_modules/es6-promise/dist/es6-promise.auto.min.js",
-			"node_modules/whatwg-fetch/fetch.js",
-			scriptBundle
-		).exec(nb + "uglifyjs --compress --mangle", s)
-			.to(scriptBundle)
-
+	async function buildProduction() {
+		await (axx(
+			`${nb}browserify ${scriptSource} -p [ tsify ] -g [ envify --NODE_ENV production ] -g uglifyify`,
+			waxx(scriptBundle)
+		).result)
+		await (axx(
+			`cat ${[
+				...polyfills,
+				scriptBundle
+			].join(" ")}`,
+			axx(`${nb}uglifyjs --compress --mangle`, waxx(scriptBundle))
+		).result)
 		console.log("✔ done production build")
 	}
 
-	if (debug) debugBuild()
-	else productionBuild()
+	await Promise.all([
+		require("./download-canned-videos")(cannedVideoOptions),
+		debug ? buildDebug() : buildProduction()
+	])
 }
 
 build(buildOptions)
