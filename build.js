@@ -69,12 +69,12 @@ async function build({debug, paths, sassWatch, cannedVideoOptions}) {
 	async function buildProduction() {
 		await (axx(
 			`${nb}browserify ${scriptSource} -p [ tsify ] -g [ envify --NODE_ENV production ] -g uglifyify`,
-			waxx(scriptBundle)
+			waxx(`${scriptBundle}.temp`)
 		).result)
 		await (axx(
 			`cat ${[
 				...polyfills,
-				scriptBundle
+				`${scriptBundle}.temp`
 			].join(" ")}`,
 			axx(`${nb}uglifyjs --compress --mangle`, waxx(scriptBundle))
 		).result)
