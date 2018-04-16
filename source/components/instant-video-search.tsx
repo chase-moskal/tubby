@@ -15,7 +15,9 @@ export class InstantVideoSearchStore {
 	@observable videoGridStore: VideoGridStore = new VideoGridStore()
 	@observable blinkDuration: number = 400
 
-	// correlate searchbar store results with videos
+	/**
+	 * Correlates the searchbar store results with videos
+	 */
 	@computed get videoResults(): Video[] {
 		const videos = [...this.videos]
 		const searchResults = [...this.searchBarStore.searchResults]
@@ -23,8 +25,27 @@ export class InstantVideoSearchStore {
 			!!searchResults.find(result => result.index === index))
 	}
 
+	/**
+	 * Set all videos
+	 */
 	@action setVideos(videos: Video[]): void {
 		this.videos = [...videos]
+	}
+
+	/**
+	 * Add videos such that newest videos appear first in the array
+	 */
+	@action addVideosInOrder(videos: Video[]): void {
+		for (let i = videos.length - 1; i >= 0; i -= 1) {
+			this.videos.unshift(videos[i])
+		}
+	}
+
+	/**
+	 * Set the animated blinker's visibility
+	 */
+	@action private setBlink(blink: boolean) {
+		this.blink = blink
 	}
 
 	protected procureSearchables(videos: Video[]): Searchable[] {
@@ -39,13 +60,12 @@ export class InstantVideoSearchStore {
 		}))
 	}
 
-	@action private setBlink(blink: boolean) {
-		this.blink = blink
-	}
-
 	// to debounce blinking
 	private blinking: boolean = false
 
+	/**
+	 * Instant video search store constructor
+	 */
 	constructor() {
 
 		// convert videos into searchables

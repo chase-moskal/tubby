@@ -60,7 +60,7 @@ async function build({debug, paths, sassWatch, cannedVideoOptions}) {
 
 	async function buildDebug() {
 		await (axx(
-			`${nb}browserify ${scriptSource} --debug -p [ tsify ] -g uglifyify`,
+			`${nb}browserify ${scriptSource} --debug -p [ tsify ]`,
 			waxx(scriptBundle)
 		).result)
 		console.log("✔ done debug build")

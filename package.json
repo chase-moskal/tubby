@@ -1,6 +1,6 @@
 {
 	"name": "tubby",
-	"version": "0.2.1-dev.0",
+	"version": "0.2.1-dev.1",
 	"description": "youtube channel instant search",
 	"keywords": [
 		"youtube",
@@ -24,7 +24,7 @@
 		"preact": "8.*"
 	},
 	"dependencies": {
-		"axx": "0.0.0",
+		"axx": "0.1.1-dev.1",
 		"commander": "2.15.1",
 		"node-fetch": "2.1.2"
 	},

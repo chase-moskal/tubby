@@ -239,6 +239,7 @@ export async function getAllVideos(opts: GetAllVideosOptions): Promise<Video[]> 
 			}
 		})
 
+		// find all fresh videos which arent canned
 		let canOpened = false
 		const freshVideos = newVideos.filter(video => {
 			const match = allVideos.find(v => v.videoId === video.videoId)

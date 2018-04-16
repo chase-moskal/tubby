@@ -70,8 +70,7 @@
 					playlistId,
 					cannedVideos,
 					onVideosReceived: function(videos) {
-						instantVideoSearchStore.videos = instantVideoSearchStore
-							.videos.concat(videos)
+						instantVideoSearchStore.addVideosInOrder(videos)
 						console.log(
 							"tubby returned " + instantVideoSearchStore.videos.length
 								+ " videos after " + (Date.now() - clock) + " ms"
