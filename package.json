@@ -14,38 +14,19 @@
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"license": "ISC",
 	"scripts": {
-		"prepare": "node build",
-		"start": "http-server",
+		"prepare": "run-s test",
+		"start": "serve -n -l 8080",
 		"test": "exit 0"
 	},
-	"peerDependencies": {
-		"mobx": "4.*",
-		"mobx-preact": "2.*",
-		"preact": "8.*"
-	},
 	"dependencies": {
-		"axx": "0.1.1-dev.1",
-		"commander": "2.15.1",
-		"node-fetch": "2.1.2"
+		"commander": "2.20.0",
+		"node-fetch": "2.5.0"
 	},
 	"devDependencies": {
-		"array.find": "1.0.7",
-		"browserify": "16.1.1",
-		"envify": "4.1.0",
-		"es6-promise": "4.2.4",
-		"http-server": "0.11.1",
+		"@types/node": "11.13.8",
 		"mkdirp": "0.5.1",
-		"mobx": "4.1.1",
-		"mobx-preact": "2.0.0",
-		"node-sass": "4.7.2",
-		"npm-run-all": "4.1.2",
-		"preact": "8.2.7",
-		"rimraf": "2.6.2",
-		"shelljs": "0.8.1",
-		"tsify": "3.0.4",
-		"typescript": "2.7.2",
-		"uglify-es": "3.3.9",
-		"uglifyify": "4.0.5",
-		"whatwg-fetch": "2.0.4"
+		"npm-run-all": "4.1.5",
+		"rimraf": "2.6.3",
+		"serve": "11.0.0"
 	}
 }
