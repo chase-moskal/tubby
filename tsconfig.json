@@ -3,18 +3,18 @@
 		"baseUrl": ".",
 		"rootDir": "source",
 		"outDir": "dist",
-		"target": "es5",
+		"target": "esnext",
 		"lib": ["es6", "dom"],
-		"module": "commonjs",
+		"module": "esnext",
 		"moduleResolution": "node",
 		"experimentalDecorators": true,
 		"sourceMap": true,
-		"declaration": true,
-		"jsx": "react",
-		"jsxFactory": "h"
+		"declaration": true
 	},
 	"include": [
-		"source/**/*.tsx",
-		"source/**/*.ts"
+		"source/**/*"
+	],
+	"exclude": [
+		"source-old/**/*"
 	]
 }

@@ -2,6 +2,8 @@
 	"name": "tubby",
 	"version": "0.2.2",
 	"description": "youtube channel instant search",
+	"author": "Chase Moskal <chasemoskal@gmail.com>",
+	"license": "ISC",
 	"keywords": [
 		"youtube",
 		"api-helper",
@@ -9,24 +11,40 @@
 		"video-grid",
 		"instant-search"
 	],
-	"main": "dist/tubby",
-	"types": "dist/tubby.d.ts",
-	"author": "Chase Moskal <chasemoskal@gmail.com>",
-	"license": "ISC",
+	"main": "dist-cjs/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"dist-cjs",
+		"source"
+	],
+	"bin": {
+		"tubby-download": "dist-cjs/tubby-download-cli.js"
+	},
 	"scripts": {
-		"prepare": "run-s test",
+		"prepare": "run-s clean barrel && run-p build-esm build-cjs && run-p download-videos-example test",
+		"clean": "rimraf dist dist-cjs dist-demo && mkdirp dist && mkdirp dist-cjs && mkdirp dist-demo",
+		"barrel": "barrelsby --delete --directory source && replace '\";$' '.js\"' source/index.ts --silent",
+		"build-esm": "tsc",
+		"build-cjs": "tsc --module commonjs --outDir dist-cjs",
+		"download-videos-example": "node ./dist-cjs/tubby-download-cli.js --api-key=AIzaSyDeHpB9W14feQs8myoWgFAZOCrDeKMLRwE --playlist-id=UUL_f53ZEJxp8TtlOkHwMV9Q > dist-demo/canned-videos.json",
 		"start": "serve -n -l 8080",
 		"test": "exit 0"
 	},
 	"dependencies": {
 		"commander": "2.20.0",
+		"die-on-error": "0.0.0-dev.0",
 		"node-fetch": "2.5.0"
 	},
 	"devDependencies": {
-		"@types/node": "11.13.8",
-		"mkdirp": "0.5.1",
-		"npm-run-all": "4.1.5",
-		"rimraf": "2.6.3",
-		"serve": "11.0.0"
+		"@types/node": "^11.13.8",
+		"barrelsby": "^2.0.0",
+		"mkdirp": "^0.5.1",
+		"npm-run-all": "^4.1.5",
+		"replace": "^1.1.0",
+		"rimraf": "^2.6.3",
+		"serve": "^11.0.0",
+		"typescript": "^3.4.5"
 	}
 }
