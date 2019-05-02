@@ -23,8 +23,10 @@
 		"tubby-download": "dist-cjs/tubby-download-cli.js"
 	},
 	"scripts": {
-		"prepare": "run-s clean barrel && run-p build-esm build-cjs && run-p download-videos-example test",
+		"prepare": "run-p build importmap",
+		"build": "run-s clean barrel && run-p build-esm build-cjs && run-p download-videos-example test",
 		"clean": "rimraf dist dist-cjs dist-demo && mkdirp dist && mkdirp dist-cjs && mkdirp dist-demo",
+		"importmap": "importly < importly.config > dist-demo/importmap.json",
 		"barrel": "barrelsby --delete --directory source && replace '\";$' '.js\"' source/index.ts --silent",
 		"build-esm": "tsc",
 		"build-cjs": "tsc --module commonjs --outDir dist-cjs",
@@ -35,11 +37,14 @@
 	"dependencies": {
 		"commander": "2.20.0",
 		"die-on-error": "0.0.0-dev.0",
+		"lit-element": "^2.1.0",
+		"lit-html": "^1.0.0",
 		"node-fetch": "2.5.0"
 	},
 	"devDependencies": {
 		"@types/node": "^11.13.8",
 		"barrelsby": "^2.0.0",
+		"importly": "0.0.0-dev.4",
 		"mkdirp": "^0.5.1",
 		"npm-run-all": "^4.1.5",
 		"replace": "^1.1.0",

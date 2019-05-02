@@ -4,6 +4,7 @@
 
 export * from "./interfaces.js"
 export * from "./tubby-download-cli.js"
+export * from "./toolbox/component.js"
 export * from "./toolbox/convert-to-tubby-thumbs.js"
 export * from "./toolbox/encode-query-string.js"
 export * from "./youtube/get-channel-uploads-playlist-id.js"
