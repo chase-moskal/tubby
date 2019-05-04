@@ -25,17 +25,22 @@
 			<h2>tubby is some frontend tech for web developers</h2>
 			<ul>
 				<li>tubby is a user interface for instant-searching (as-you-type) through a youtube channel's whole public catalog of videos</li>
-				<li>tubby has preact components which use mobx for state management</li>
-				<li>tubby's main javascript module has some functions to fetch a youtube channel's entire video catalog</li>
-				<li>tubby is written in typescript</li>
 				<li>tubby is free and open source <a href="https://github.com/chase-moskal/tubby">on github</a></li>
 			</ul>
 		</section>
 		<section>
 			<h2>demo featuring <a href="https://www.youtube.com/user/JordanPetersonVideos">jordan b peterson's youtube channel</a></h2>
-			<div class="landing-zone">
-				<video-display></video-display>
-			</div>
+
+			<!-- video explorer and stuff -->
+			<video-explorer>
+				<video-search-bar></video-search-bar>
+				<video-grid>
+					<video-display></video-display>
+					<video-display></video-display>
+					<video-display></video-display>
+				</video-grid>
+			</video-explorer>
+
 		</section>
 	</main>
 
