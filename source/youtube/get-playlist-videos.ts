@@ -15,12 +15,12 @@ export async function getPlaylistVideos(opts: GetAllVideosOptions): Promise<Vide
 		data: moreData,
 		onVideosReceived,
 		paginationLimit = 50,
-		cannedVideos = null,
+		cannedVideos = [],
 		...options
 	} = opts
 
 	let count = 0
-	let allVideos: Video[] = cannedVideos ? cannedVideos : []
+	let allVideos: Video[] = cannedVideos
 	let nextPageToken: string
 	let go: boolean = true
 

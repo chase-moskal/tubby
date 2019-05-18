@@ -2,7 +2,7 @@
 import {Video} from "../interfaces.js"
 import {Component, html, prop} from "../toolbox/component.js"
 
-export class VideoDisplay extends Component {
+export class TubbyVideo extends Component {
 	@prop(Object, false) video: Video
 	@prop(Number) maxDescriptionLength: number = 100
 
