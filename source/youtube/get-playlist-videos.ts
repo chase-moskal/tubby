@@ -1,6 +1,6 @@
 
 import {youtubeRequest} from "./youtube-request.js"
-import {GetAllVideosOptions, Video} from "../interfaces.js"
+import {GetPlaylistVideosOptions, Video} from "../interfaces.js"
 import {convertToTubbyThumbs} from "../toolbox/convert-to-tubby-thumbs.js"
 
 /**
@@ -9,7 +9,7 @@ import {convertToTubbyThumbs} from "../toolbox/convert-to-tubby-thumbs.js"
  * - it can take awhile, i found a quarter second per round trip — 50 videos per trip
  * - you can render videos as they load realtime by providing an 'onVideosReceived' callback
  */
-export async function getPlaylistVideos(opts: GetAllVideosOptions): Promise<Video[]> {
+export async function getPlaylistVideos(opts: GetPlaylistVideosOptions): Promise<Video[]> {
 	const {
 		playlistId,
 		data: moreData,
@@ -58,8 +58,7 @@ export async function getPlaylistVideos(opts: GetAllVideosOptions): Promise<Vide
 				watchLink: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`,
 				title: item.snippet.title,
 				description: item.snippet.description,
-				thumbs: convertToTubbyThumbs(item.snippet.thumbnails),
-				latest: numeral === totalNumberOfVideos
+				thumbs: convertToTubbyThumbs(item.snippet.thumbnails)
 			}
 		})
 

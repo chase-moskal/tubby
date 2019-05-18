@@ -2,107 +2,171 @@
 import {Video} from "../interfaces.js"
 import {Component, html, prop} from "../toolbox/component.js"
 
+import {TubbySearch} from "./tubby-search.js"
 import {getUploads} from "../youtube/get-uploads.js"
 import {getPlaylistVideos} from "../youtube/get-playlist-videos.js"
 
-const _videos = Symbol("videos")
-const _getMatchingVideos = Symbol("getMatchingVideos")
+const _load = Symbol("_load")
+const _dispatchLoad = Symbol("_dispatchLoad")
+const _dispatchError = Symbol("_dispatchError")
+const _searchedVideos = Symbol("_searchedVideos")
+const _updateSearchedVideos = Symbol("_getVideosThatMatchSearch")
 
-const err = (message: string) => new Error(`tubby-youtube-explorer: ${message}`)
+class TubbyYoutubeExplorerError extends Error {
+	originalError: Error
+}
+const errtag = "tubby-youtube-explorer"
+const err = (message: string) => new TubbyYoutubeExplorerError(message)
 
 export class TubbyYoutubeExplorer extends Component {
-	@prop(String, false) ["api-key"]: string
-	@prop(String, false) ["playlist-id"]: string
-	@prop(String, false) ["channel-id"]: string
-	@prop(String, false) ["canned"]: string
-	@prop(Boolean, true) ["loading"]: boolean = true
-	@prop(Array, false) private [_videos]: Video[] = []
+	@prop(String) canned: string
+	@prop(Array) videos: Video[] = []
+	@prop(String) ["api-key"]: string
+	@prop(Function) onLoad: () => void
+	@prop(String) ["channel-id"]: string
+	@prop(String) ["playlist-id"]: string
+	@prop(Boolean, true) loading: boolean = true
+	@prop(Function) onError: (error: Error) => void
+	@prop(Array) private [_searchedVideos]: Video[] = []
 
-	private async load(): Promise<Video[]> {
+	private [_dispatchLoad]() {
+		this.dispatchEvent(new CustomEvent("explorerLoad", {
+			detail: {},
+			bubbles: true,
+			composed: true
+		}))
+		if (this.onLoad) this.onLoad()
+	}
+
+	private [_dispatchError](error: TubbyYoutubeExplorerError) {
+		this.dispatchEvent(new CustomEvent("explorerError", {
+			detail: {error},
+			bubbles: true,
+			composed: true
+		}))
+		if (this.onError) this.onError(error)
+		else console.error(error)
+	}
+
+	private [_updateSearchedVideos]() {
+		const search: TubbySearch = this.shadowRoot.querySelector("tubby-search")
+		this[_searchedVideos] = this.videos.filter(
+			video => search.match([
+				video.title,
+				video.description,
+				`#${video.numeral}`,
+				video.videoId
+			].join(" "))
+		)
+	}
+
+	private async [_load]() {
 		const apiKey = this["api-key"]
 		const playlistId = this["playlist-id"]
 		const channelId = this["channel-id"]
-		const canned = this["canned"]
+		const canned = this.canned
 
-		const cannedVideos = canned
-			? await fetch(canned).then(response => response.json())
-			: []
+		let cannedVideos = []
 
-		// accumulate videos as they come in
-		const onVideosReceived = (videos: Video[]) =>
-			this[_videos] = [...this[_videos], ...videos]
+		try {
+			cannedVideos = canned
+				? await fetch(canned).then(response => response.json())
+				: []
+			this.videos = [...cannedVideos]
+		}
+		catch (error) {
+			const tubbyError = err(`error fetching canned videos from "${canned}"`)
+			tubbyError.originalError = error
+			this[_dispatchError](tubbyError)
+		}
 
-		const videos = this[_videos] = playlistId
-			? await getPlaylistVideos({
-				apiKey,
-				playlistId,
-				cannedVideos,
-				onVideosReceived
-			})
-			: await getUploads({apiKey, channelId, onVideosReceived})
+		if (playlistId || channelId) {
+			if (!this["api-key"]) throw err(`required attribute 'api-key' is missing`)
+
+			try {
+				this.videos = playlistId
+					? await getPlaylistVideos({apiKey, playlistId, cannedVideos})
+					: await getUploads({apiKey, channelId, cannedVideos})
+			}
+			catch (error) {
+				const tubbyError = err(`unable to fetch from ${playlistId ? `playlist-id "${playlistId}"` : `channel-id "${channelId}"`}`)
+				tubbyError.originalError = error
+				this[_dispatchError](tubbyError)
+			}
+		}
 
 		this.loading = false
+		this[_updateSearchedVideos]()
+		this[_dispatchLoad]()
+	}
 
-		return videos
+	getSearchedVideos() {
+		return [...this[_searchedVideos]]
 	}
 
 	firstUpdated() {
-		if (!this["api-key"])
-			throw err(`required attribute 'api-key' is missing`)
-		if (!this["playlist-id"] && !this["channel-id"])
-			throw err(`one of the following attributes is required: 'playlist-id', or 'channel-id'`)
-		this.load()
+		this[_load]().catch(error => this[_dispatchError](error))
 	}
 
-	private [_getMatchingVideos]() {
-		// const searchbar = this.shadowRoot.querySelector(".search")
-		const searchbar = {
-			match(video: Video) { return true }
+	updated(changedProperties: Map<any, any>) {
+		super.updated(changedProperties)
+		if (changedProperties.has("videos")) {
+			this[_updateSearchedVideos]()
 		}
-		return this[_videos].filter(video => searchbar.match(video))
 	}
-
-	private mystyle = html`
-		<style>
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
-			.loadable {
-				position: relative;
-				background: red;
-				min-height: 4em;
-			}
-			:host([loading]) .loadable::before {
-				content: "LOADING";
-				display: block;
-				position: absolute;
-				top: 0%;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: rgba(255,255,255, 0.5);
-				color: black;
-			}
-		</style>
-	`
 
 	render() {
+		const videos = this.videos
+		const searchedVideos = this[_searchedVideos]
+		const handleSearchUpdate = this[_updateSearchedVideos]
+
 		return html`
-			${this.mystyle}
+			<style>
+				* {
+					margin: 0;
+					padding: 0;
+					box-sizing: border-box;
+				}
+
+				.loadable {
+					position: relative;
+					min-height: 4em;
+				}
+
+				:host([loading]) .loadable::before {
+					content: "LOADING";
+					display: block;
+					position: absolute;
+					top: 0%;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					background: rgba(255,255,255, 0.5);
+					color: black;
+				}
+			</style>
+
 			<div class="latest loadable">
-				${this[_videos].length > 0
-					? html`<tubby-video .video="${this[_videos][0]}"></tubby-video>`
+				${videos.length > 0
+					? html`<tubby-video .video="${videos[0]}"></tubby-video>`
 					: null}
 			</div>
-			<div class="search"></div>
-			<div class="info"></div>
-			<ol class="grid loadable">
-				${this[_getMatchingVideos]().map(video => html`
+
+			<div class="search">
+				<tubby-search @searchUpdate=${handleSearchUpdate}></tubby-search>
+			</div>
+
+			<div class="info">
+				<p class="number-of-results">
+					${searchedVideos.length} result${searchedVideos.length === 1 ? "" : "s"}
+				</p>
+			</div>
+
+			<div class="grid loadable">
+				${searchedVideos.map(video => html`
 					<tubby-video .video="${video}"></tubby-video>
 				`)}
-			</ol>
+			</div>
 		`
 	}
 }

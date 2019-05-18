@@ -63,19 +63,24 @@ export interface Video {
 	title: string
 	description: string
 	thumbs: TubbyThumbs
-	latest: boolean
 }
 
-export interface GetAllVideosOptions extends CommonRequestOptions {
-	playlistId: string;
-	paginationLimit?: number
-	data?: any;
-	onVideosReceived?: (videos: Video[]) => void
+export interface GetPlaylistVideosOptions extends CommonRequestOptions {
+	playlistId: string
+	data?: any
 	cannedVideos?: Video[]
-}
-
-export interface GetAllVideosForChannelOptions extends CommonRequestOptions {
-	channelId: string;
 	paginationLimit?: number
 	onVideosReceived?: (videos: Video[]) => void
+}
+
+export interface GetUploadsOptions extends CommonRequestOptions {
+	channelId: string
+	cannedVideos?: Video[]
+	paginationLimit?: number
+	onVideosReceived?: (videos: Video[]) => void
+}
+
+export interface Searchable {
+	index: number
+	content: string
 }

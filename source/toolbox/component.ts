@@ -5,6 +5,6 @@ export {LitElement, html, css, property}
 
 export class Component extends LitElement {}
 
-export function prop(type: any = undefined, reflect: boolean = true) {
+export function prop(type: any = undefined, reflect: boolean = false) {
 	return <any>property({type, reflect})
 }
