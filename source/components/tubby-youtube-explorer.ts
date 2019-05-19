@@ -7,39 +7,61 @@ import {getUploads} from "../youtube/get-uploads.js"
 import {getPlaylistVideos} from "../youtube/get-playlist-videos.js"
 
 const _load = Symbol("_load")
-const _dispatchLoad = Symbol("_dispatchLoad")
-const _dispatchError = Symbol("_dispatchError")
+const _videos = Symbol("_videos")
+const _status = Symbol("_status")
+const _statusToReady = Symbol("_dispatchReady")
+const _statusToError = Symbol("_dispatchError")
 const _searchedVideos = Symbol("_searchedVideos")
-const _updateSearchedVideos = Symbol("_getVideosThatMatchSearch")
+const _updateSearchedVideos = Symbol("_updateSearchedVideos")
 
 class TubbyYoutubeExplorerError extends Error {
 	originalError: Error
 }
-const errtag = "tubby-youtube-explorer"
+
 const err = (message: string) => new TubbyYoutubeExplorerError(message)
 
 export class TubbyYoutubeExplorer extends Component {
+	@prop(Error) error: Error
 	@prop(String) canned: string
-	@prop(Array) videos: Video[] = []
 	@prop(String) ["api-key"]: string
-	@prop(Function) onLoad: () => void
+	@prop(Function) onReady: () => void
 	@prop(String) ["channel-id"]: string
 	@prop(String) ["playlist-id"]: string
-	@prop(Boolean, true) loading: boolean = true
 	@prop(Function) onError: (error: Error) => void
-	@prop(Array) private [_searchedVideos]: Video[] = []
 
-	private [_dispatchLoad]() {
-		this.dispatchEvent(new CustomEvent("explorerLoad", {
+	@prop(Array) private [_videos]: Video[] = []
+	@prop(Array) private [_searchedVideos]: Video[] = []
+	@prop(String) private [_status]: "pending" | "error" | "ready" = "pending"
+
+	set videos(videos: Video[]) {
+		if (videos && videos.length > 0) {
+			this[_videos] = videos
+			this[_updateSearchedVideos]()
+			this[_statusToReady]()
+		}
+		else {
+			this[_statusToError](err(`videos array is empty, must be populated`))
+		}
+	}
+
+	get videos(): Video[] {
+		return this[_videos]
+	}
+
+	private [_statusToReady]() {
+		this[_status] = "ready"
+		this.dispatchEvent(new CustomEvent("ready", {
 			detail: {},
 			bubbles: true,
 			composed: true
 		}))
-		if (this.onLoad) this.onLoad()
+		if (this.onReady) this.onReady()
 	}
 
-	private [_dispatchError](error: TubbyYoutubeExplorerError) {
-		this.dispatchEvent(new CustomEvent("explorerError", {
+	private [_statusToError](error: TubbyYoutubeExplorerError) {
+		this[_status] = "error"
+		this.error = error
+		this.dispatchEvent(new CustomEvent("error", {
 			detail: {error},
 			bubbles: true,
 			composed: true
@@ -50,7 +72,8 @@ export class TubbyYoutubeExplorer extends Component {
 
 	private [_updateSearchedVideos]() {
 		const search: TubbySearch = this.shadowRoot.querySelector("tubby-search")
-		this[_searchedVideos] = this.videos.filter(
+		if (!search) return
+		this[_searchedVideos] = this[_videos].filter(
 			video => search.match([
 				video.title,
 				video.description,
@@ -66,61 +89,48 @@ export class TubbyYoutubeExplorer extends Component {
 		const channelId = this["channel-id"]
 		const canned = this.canned
 
-		let cannedVideos = []
+		let videos: Video[] = []
 
 		try {
-			cannedVideos = canned
-				? await fetch(canned).then(response => response.json())
-				: []
-			this.videos = [...cannedVideos]
+			if (canned) {
+				const response = await fetch(canned)
+				videos = await response.json()
+			}
+			if (apiKey) {
+				if (playlistId)
+					videos = await getPlaylistVideos({apiKey, playlistId, cannedVideos: videos})
+				else if (channelId)
+					videos = await getUploads({apiKey, channelId, cannedVideos: videos})
+				else
+					throw err(`missing required attribute: "playlist-id", or "channel-id"`)
+			}
+			else if (!canned)
+				throw err(`missing required attribute: "api-key", or "canned"`)
+			this.videos = videos
 		}
 		catch (error) {
-			const tubbyError = err(`error fetching canned videos from "${canned}"`)
-			tubbyError.originalError = error
-			this[_dispatchError](tubbyError)
+			this[_statusToError](error)
 		}
-
-		if (playlistId || channelId) {
-			if (!this["api-key"]) throw err(`required attribute 'api-key' is missing`)
-
-			try {
-				this.videos = playlistId
-					? await getPlaylistVideos({apiKey, playlistId, cannedVideos})
-					: await getUploads({apiKey, channelId, cannedVideos})
-			}
-			catch (error) {
-				const tubbyError = err(`unable to fetch from ${playlistId ? `playlist-id "${playlistId}"` : `channel-id "${channelId}"`}`)
-				tubbyError.originalError = error
-				this[_dispatchError](tubbyError)
-			}
-		}
-
-		this.loading = false
-		this[_updateSearchedVideos]()
-		this[_dispatchLoad]()
-	}
-
-	getSearchedVideos() {
-		return [...this[_searchedVideos]]
 	}
 
 	firstUpdated() {
-		this[_load]().catch(error => this[_dispatchError](error))
+		this[_load]()
 	}
 
 	updated(changedProperties: Map<any, any>) {
 		super.updated(changedProperties)
-		if (changedProperties.has("videos")) {
+		if (changedProperties.has(_videos)) {
 			this[_updateSearchedVideos]()
 		}
 	}
 
 	render() {
-		const videos = this.videos
+		const videos = this[_videos]
 		const searchedVideos = this[_searchedVideos]
-		const handleSearchUpdate = this[_updateSearchedVideos]
+		const handleSearchUpdate = () => this[_updateSearchedVideos]()
+		const status = this[_status]
 
-		return html`
+		const styles = html`
 			<style>
 				* {
 					margin: 0;
@@ -128,25 +138,23 @@ export class TubbyYoutubeExplorer extends Component {
 					box-sizing: border-box;
 				}
 
-				.loadable {
+				:host {
 					position: relative;
 					min-height: 4em;
 				}
-
-				:host([loading]) .loadable::before {
-					content: "LOADING";
-					display: block;
-					position: absolute;
-					top: 0%;
-					left: 0;
-					width: 100%;
-					height: 100%;
-					background: rgba(255,255,255, 0.5);
-					color: black;
-				}
 			</style>
+		`
 
-			<div class="latest loadable">
+		const pending = html`
+			<div class="pending">..pending..</div>
+		`
+
+		const error = html`
+			<div class="error">error has occurred</div>
+		`
+
+		const ready = html`
+			<div class="latest">
 				${videos.length > 0
 					? html`<tubby-video .video="${videos[0]}"></tubby-video>`
 					: null}
@@ -162,11 +170,16 @@ export class TubbyYoutubeExplorer extends Component {
 				</p>
 			</div>
 
-			<div class="grid loadable">
+			<div class="grid">
 				${searchedVideos.map(video => html`
 					<tubby-video .video="${video}"></tubby-video>
 				`)}
 			</div>
+		`
+
+		return html`
+			${styles}
+			${({pending, error, ready})[status]}
 		`
 	}
 }
