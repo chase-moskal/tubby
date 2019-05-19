@@ -1,6 +1,6 @@
 
-import {Video} from "../interfaces.js"
 import {TubbyError} from "../tubby-error.js"
+import {Video, ThumbSize} from "../interfaces.js"
 import {getUploads} from "../youtube/get-uploads.js"
 import {Component, html, prop} from "../toolbox/component.js"
 import {getPlaylistVideos} from "../youtube/get-playlist-videos.js"
@@ -28,6 +28,7 @@ export class TubbyYoutubeExplorer extends Component {
 	@prop(Boolean, true) search: boolean = false
 	@prop(Function) onError: (error: Error) => void
 	@prop(Number, true) ["max-description-length"]: number = 240
+	@prop(String, true) ["thumb-size"]: ThumbSize = "small"
 
 	@prop(Array) private [_videos]: Video[] = []
 	@prop(Array) private [_searchedVideos]: Video[] = []
@@ -212,7 +213,8 @@ export class TubbyYoutubeExplorer extends Component {
 				${searchedVideos.map(video => html`
 					<tubby-video
 						.video="${video}"
-						maxDescriptionLength="${this["max-description-length"]}">
+						thumb-size="${this["thumb-size"]}"
+						max-description-length="${this["max-description-length"]}">
 					</tubby-video>
 				`)}
 			</div>

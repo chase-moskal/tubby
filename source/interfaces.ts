@@ -1,7 +1,4 @@
 
-/**
- * Options common to all youtube api requests
- */
 export interface CommonRequestOptions {
 	apiKey: string
 	apiEndpoint?: string
@@ -9,15 +6,8 @@ export interface CommonRequestOptions {
 	fetch?: typeof fetch
 }
 
-/**
- * Response from the youtube api
- */
 export type YoutubeResponse = any
 
-/**
- * Options for a generic request to the youtube api
- * - provide your own resource and data
- */
 export interface RequestOptions extends CommonRequestOptions {
 	resource: string
 	data: any
@@ -41,9 +31,6 @@ export interface YoutubeThumbnails {
 	maxres?: YoutubeThumbnail
 }
 
-/**
- * Tubby-formatted youtube thumbnails
- */
 export interface TubbyThumbs {
 	small: string
 	medium: string
@@ -53,9 +40,8 @@ export interface TubbyThumbs {
 	biggest: string
 }
 
-/**
- * Tubby-formatted youtube video
- */
+export type ThumbSize = "small" | "medium" | "large" | "biggest"
+
 export interface Video {
 	numeral: number
 	videoId: string

@@ -1,14 +1,14 @@
 
-import {Video} from "../interfaces.js"
+import {Video, ThumbSize} from "../interfaces.js"
 import {Component, html, prop} from "../toolbox/component.js"
 
 export class TubbyVideo extends Component {
 	@prop(Object) video: Video
-	@prop(Number, true) maxDescriptionLength: number = 100
+	@prop(Number, true) ["max-description-length"]: number = 240
+	@prop(String, true) ["thumb-size"]: ThumbSize = "small"
 
 	render() {
-		const {video, maxDescriptionLength} = this
-		const coverThumb = video.thumbs.medium
+		const coverThumb = this.video.thumbs[this["thumb-size"]]
 
 		const style = html`
 			<style>
@@ -89,15 +89,15 @@ export class TubbyVideo extends Component {
 		const link = html`
 			<a class="link"
 				target="_blank"
-				href="${video.watchLink}"
+				href="${this.video.watchLink}"
 				style="background-image: url('${coverThumb}')">
 					<div class="title">
-						<span class="text">${video.title}</span>
-						<span class="numeral">${video.numeral}</span>
+						<span class="text">${this.video.title}</span>
+						<span class="numeral">${this.video.numeral}</span>
 						
 					</div>
 					<div class="description">
-						${video.description.substring(0, maxDescriptionLength) + "..."}
+						${this.video.description.substring(0, this["max-description-length"]) + "..."}
 					</div>
 			</a>
 		`
@@ -106,6 +106,6 @@ export class TubbyVideo extends Component {
 
 		return html`
 			${style}
-			${video ? link : blank}`
+			${this.video ? link : blank}`
 	}
 }
