@@ -1,19 +1,12 @@
 {
 	"name": "tubby",
-	"version": "0.2.2",
+	"version": "0.3.0-dev.0",
 	"description": "youtube channel instant search",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"license": "ISC",
-	"keywords": [
-		"youtube",
-		"api-helper",
-		"search-bar",
-		"video-grid",
-		"instant-search"
-	],
+	"type": "module",
 	"main": "dist-cjs/index.js",
 	"module": "dist/index.js",
-	"type": "module",
 	"types": "dist/index.d.ts",
 	"files": [
 		"dist",
@@ -23,6 +16,13 @@
 	"bin": {
 		"tubby-download": "dist-cjs/tubby-download-cli.js"
 	},
+	"keywords": [
+		"youtube",
+		"api-helper",
+		"search-bar",
+		"video-grid",
+		"instant-search"
+	],
 	"scripts": {
 		"prepare": "run-s clean barrel && run-p build-esm build-cjs && run-p importmap download-videos-example test",
 		"clean": "rimraf dist dist-cjs dist-demo && mkdirp dist && mkdirp dist-cjs && mkdirp dist-demo",

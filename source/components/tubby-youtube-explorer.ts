@@ -27,7 +27,7 @@ export class TubbyYoutubeExplorer extends Component {
 	@prop(String) ["playlist-id"]: string
 	@prop(Boolean, true) search: boolean = false
 	@prop(Function) onError: (error: Error) => void
-	@prop(Number, true) maxDescriptionLength: number = 200
+	@prop(Number, true) ["max-description-length"]: number = 240
 
 	@prop(Array) private [_videos]: Video[] = []
 	@prop(Array) private [_searchedVideos]: Video[] = []
@@ -60,8 +60,8 @@ export class TubbyYoutubeExplorer extends Component {
 	}
 
 	render() {
+		const {search} = this
 		const status = this[_status]
-		const {search, maxDescriptionLength} = this
 		const searchedVideos = this[_searchedVideos]
 		const handleSearchUpdate = () => this[_updateSearchedVideos]()
 
@@ -212,7 +212,7 @@ export class TubbyYoutubeExplorer extends Component {
 				${searchedVideos.map(video => html`
 					<tubby-video
 						.video="${video}"
-						maxDescriptionLength="${maxDescriptionLength}">
+						maxDescriptionLength="${this["max-description-length"]}">
 					</tubby-video>
 				`)}
 			</div>
