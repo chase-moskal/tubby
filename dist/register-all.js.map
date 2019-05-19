@@ -1,0 +1,1 @@
+{"version":3,"file":"register-all.js","sourceRoot":"","sources":["../source/register-all.ts"],"names":[],"mappings":"AACA,OAAO,EAAC,UAAU,EAAC,MAAM,6BAA6B,CAAA;AACtD,OAAO,EAAC,WAAW,EAAC,MAAM,8BAA8B,CAAA;AACxD,OAAO,EAAC,oBAAoB,EAAC,MAAM,wCAAwC,CAAA;AAE3E,OAAO,EAAC,kBAAkB,EAAC,MAAM,kCAAkC,CAAA;AAEnE,kBAAkB,CAAC;IAClB,UAAU;IACV,WAAW;IACX,oBAAoB;CACpB,CAAC,CAAA"}

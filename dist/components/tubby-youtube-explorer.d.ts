@@ -1,0 +1,36 @@
+import { Video, ThumbSize } from "../interfaces.js";
+import { Component } from "../toolbox/component.js";
+declare const _load: unique symbol;
+declare const _videos: unique symbol;
+declare const _status: unique symbol;
+declare const _statusToReady: unique symbol;
+declare const _statusToError: unique symbol;
+declare const _searchedVideos: unique symbol;
+declare const _statusToPending: unique symbol;
+declare const _updateSearchedVideos: unique symbol;
+export declare class TubbyYoutubeExplorer extends Component {
+    error: Error;
+    canned: string;
+    ["api-key"]: string;
+    onReady: () => void;
+    ["channel-id"]: string;
+    ["playlist-id"]: string;
+    search: boolean;
+    onError: (error: Error) => void;
+    ["max-description-length"]: number;
+    ["thumb-size"]: ThumbSize;
+    private [_videos];
+    private [_searchedVideos];
+    private [_status];
+    videos: Video[];
+    firstUpdated(): void;
+    updated(changedProperties: Map<any, any>): void;
+    static readonly styles: import("lit-element").CSSResult;
+    render(): import("lit-html").TemplateResult;
+    private [_load];
+    private [_updateSearchedVideos];
+    private [_statusToPending];
+    private [_statusToReady];
+    private [_statusToError];
+}
+export {};

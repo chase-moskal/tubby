@@ -1,0 +1,16 @@
+
+{
+	"imports": {
+		"commander/": "https://cdn.jsdelivr.net/npm/commander@3.0.2/",
+		"commander": "https://cdn.jsdelivr.net/npm/commander@3.0.2/index",
+		"die-on-error/": "https://cdn.jsdelivr.net/npm/die-on-error@0.0.0-dev.0/",
+		"die-on-error": "https://cdn.jsdelivr.net/npm/die-on-error@0.0.0-dev.0/index",
+		"lit-element/": "https://cdn.jsdelivr.net/npm/lit-element@2.2.1/",
+		"lit-element": "https://cdn.jsdelivr.net/npm/lit-element@2.2.1/lit-element.js",
+		"lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/",
+		"lit-html": "https://cdn.jsdelivr.net/npm/lit-html@1.1.2/lit-html.js",
+		"node-fetch/": "https://cdn.jsdelivr.net/npm/node-fetch@2.6.0/",
+		"node-fetch": "https://cdn.jsdelivr.net/npm/node-fetch@2.6.0/lib/index.mjs"
+	}
+}
+
