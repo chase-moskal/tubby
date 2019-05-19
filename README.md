@@ -1,7 +1,7 @@
 
 # `tubby` — youtube playlist display
 
-- [***⚡ demo: chasemoskal.com/tubby***](*https://chasemoskal.com/tubby)
+- [***⚡ demo: chasemoskal.com/tubby***](https://chasemoskal.com/tubby)
 - web components to display a youtube playlist
 
 ## understanding the `<tubby-youtube-explorer>` component
@@ -12,7 +12,7 @@
     - you have to whitelist your domains with that api key
     - you can have an api key that allows 'localhost' for testing
 
-2. **install tubby on your page so the component actually works**
+2. **install tubby on your page**
 
     *(TODO: write these instructions)*  
     similar instructions  for [carouse](https://github.com/chase-moskal/carouse#okay-so-thats-how-i-use-it-how-do-i-install-it), so check those out but adapt the url's to ones for `tubby`
@@ -34,7 +34,7 @@
 
     youtube's api limits us to 50 videos at a time, so tubby does the hard work and requests every video sequentially, using back-to-back calls until it finds every video in the playlist
 
-    tubby has a caching mechanism called 'canned'
+    tubby has a simple dev-time caching mechanism i call "canning videos"
 
 4. **know how to configure the explorer for your use-case**
 
