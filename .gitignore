@@ -1,7 +1,7 @@
 
-/dist
+# /dist
 /dist-cjs
-/dist-demo
+# /dist-demo
 /coverage
 /node_modules
 /*.tgz
