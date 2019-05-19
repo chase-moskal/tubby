@@ -1,10 +1,13 @@
 
 import {Video} from "../interfaces.js"
+import {TubbyError} from "../tubby-error.js"
+import {getUploads} from "../youtube/get-uploads.js"
 import {Component, html, prop} from "../toolbox/component.js"
+import {getPlaylistVideos} from "../youtube/get-playlist-videos.js"
 
 import {TubbySearch} from "./tubby-search.js"
-import {getUploads} from "../youtube/get-uploads.js"
-import {getPlaylistVideos} from "../youtube/get-playlist-videos.js"
+
+const {err} = TubbyError
 
 const _load = Symbol("_load")
 const _videos = Symbol("_videos")
@@ -13,12 +16,6 @@ const _statusToReady = Symbol("_dispatchReady")
 const _statusToError = Symbol("_dispatchError")
 const _searchedVideos = Symbol("_searchedVideos")
 const _updateSearchedVideos = Symbol("_updateSearchedVideos")
-
-class TubbyYoutubeExplorerError extends Error {
-	originalError: Error
-}
-
-const err = (message: string) => new TubbyYoutubeExplorerError(message)
 
 export class TubbyYoutubeExplorer extends Component {
 	@prop(Error) error: Error
@@ -46,71 +43,6 @@ export class TubbyYoutubeExplorer extends Component {
 
 	get videos(): Video[] {
 		return this[_videos]
-	}
-
-	private [_statusToReady]() {
-		this[_status] = "ready"
-		this.dispatchEvent(new CustomEvent("ready", {
-			detail: {},
-			bubbles: true,
-			composed: true
-		}))
-		if (this.onReady) this.onReady()
-	}
-
-	private [_statusToError](error: TubbyYoutubeExplorerError) {
-		this[_status] = "error"
-		this.error = error
-		this.dispatchEvent(new CustomEvent("error", {
-			detail: {error},
-			bubbles: true,
-			composed: true
-		}))
-		if (this.onError) this.onError(error)
-		else console.error(error)
-	}
-
-	private [_updateSearchedVideos]() {
-		const search: TubbySearch = this.shadowRoot.querySelector("tubby-search")
-		if (!search) return
-		this[_searchedVideos] = this[_videos].filter(
-			video => search.match([
-				video.title,
-				video.description,
-				`#${video.numeral}`,
-				video.videoId
-			].join(" "))
-		)
-	}
-
-	private async [_load]() {
-		const apiKey = this["api-key"]
-		const playlistId = this["playlist-id"]
-		const channelId = this["channel-id"]
-		const canned = this.canned
-
-		let videos: Video[] = []
-
-		try {
-			if (canned) {
-				const response = await fetch(canned)
-				videos = await response.json()
-			}
-			if (apiKey) {
-				if (playlistId)
-					videos = await getPlaylistVideos({apiKey, playlistId, cannedVideos: videos})
-				else if (channelId)
-					videos = await getUploads({apiKey, channelId, cannedVideos: videos})
-				else
-					throw err(`missing required attribute: "playlist-id", or "channel-id"`)
-			}
-			else if (!canned)
-				throw err(`missing required attribute: "api-key", or "canned"`)
-			this.videos = videos
-		}
-		catch (error) {
-			this[_statusToError](error)
-		}
 	}
 
 	firstUpdated() {
@@ -181,5 +113,73 @@ export class TubbyYoutubeExplorer extends Component {
 			${styles}
 			${({pending, error, ready})[status]}
 		`
+	}
+
+	private async [_load]() {
+		const apiKey = this["api-key"]
+		const playlistId = this["playlist-id"]
+		const channelId = this["channel-id"]
+		const canned = this.canned
+
+		let videos: Video[] = []
+
+		try {
+			if (canned) {
+				const response = await fetch(canned)
+				videos = await response.json()
+			}
+			if (apiKey) {
+				if (playlistId)
+					videos = await getPlaylistVideos({apiKey, playlistId, cannedVideos: videos})
+				else if (channelId)
+					videos = await getUploads({apiKey, channelId, cannedVideos: videos})
+				else
+					throw err(`missing required attribute: "playlist-id", or "channel-id"`)
+			}
+			else if (!canned)
+				throw err(`missing required attribute: "api-key", or "canned"`)
+			this.videos = videos
+		}
+		catch (error) {
+			const errorToReport = error instanceof TubbyError
+				? error
+				: err(`unknown error`, error)
+			this[_statusToError](errorToReport)
+		}
+	}
+
+	private [_updateSearchedVideos]() {
+		const search: TubbySearch = this.shadowRoot.querySelector("tubby-search")
+		if (!search) return
+		this[_searchedVideos] = this[_videos].filter(
+			video => search.match([
+				video.title,
+				video.description,
+				`#${video.numeral}`,
+				video.videoId
+			].join(" "))
+		)
+	}
+
+	private [_statusToReady]() {
+		this[_status] = "ready"
+		this.dispatchEvent(new CustomEvent("ready", {
+			detail: {},
+			bubbles: true,
+			composed: true
+		}))
+		if (this.onReady) this.onReady()
+	}
+
+	private [_statusToError](error: TubbyError) {
+		this[_status] = "error"
+		this.error = error
+		this.dispatchEvent(new CustomEvent("error", {
+			detail: {error},
+			bubbles: true,
+			composed: true
+		}))
+		if (this.onError) this.onError(error)
+		else console.error(error)
 	}
 }
