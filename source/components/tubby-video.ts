@@ -10,24 +10,6 @@ export class TubbyVideo extends Component {
 		const {video, maxDescriptionLength} = this
 		const coverThumb = video.thumbs.medium
 
-		const link = html`
-			<a class="link"
-				target="_blank"
-				href="${video.watchLink}"
-				style="background-image: url('${coverThumb}')">
-					<div class="title">
-						<span class="text">${video.title}</span>
-						<span class="numeral">${video.numeral}</span>
-						
-					</div>
-					<div class="description">
-						${video.description.substring(0, maxDescriptionLength) + "..."}
-					</div>
-			</a>
-		`
-
-		const blank = html`<p>--</p>`
-
 		const style = html`
 			<style>
 				* {
@@ -36,13 +18,18 @@ export class TubbyVideo extends Component {
 					box-sizing: border-box;
 				}
 
+				:host {
+					display: block;
+					position: relative;
+				}
+
 				.link {
 					z-index: 1;
 					position: relative;
 					display: block;
+					height: 100%;
 					padding: 0.5em 1em;
 					padding-bottom: 2em;
-					min-height: 200px;
 					overflow: hidden;
 					text-decoration: none;
 					cursor: pointer;
@@ -53,7 +40,7 @@ export class TubbyVideo extends Component {
 				}
 
 				.link:hover, .link:focus {
-					outline-color: red;
+					outline: var(--focus-outline, 2px solid #0ef);
 				}
 
 				.link::before {
@@ -83,10 +70,39 @@ export class TubbyVideo extends Component {
 				}
 
 				.title .numeral {
+					opacity: 0.8;
 					display: block;
+					font-size: 0.8em;
+					padding-left: 0.4em;
+				}
+
+				.title .numeral::before {
+					content: "#";
+				}
+
+				.description {
+					font-size: 0.8em;
 				}
 			</style>
 		`
+
+		const link = html`
+			<a class="link"
+				target="_blank"
+				href="${video.watchLink}"
+				style="background-image: url('${coverThumb}')">
+					<div class="title">
+						<span class="text">${video.title}</span>
+						<span class="numeral">${video.numeral}</span>
+						
+					</div>
+					<div class="description">
+						${video.description.substring(0, maxDescriptionLength) + "..."}
+					</div>
+			</a>
+		`
+
+		const blank = html`<p>--</p>`
 
 		return html`
 			${style}

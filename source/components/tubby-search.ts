@@ -1,5 +1,4 @@
 
-import {Searchable} from "../interfaces.js"
 import {Component, html, prop} from "../toolbox/component.js"
 
 const _searchUpdate = Symbol("searchUpdate")
