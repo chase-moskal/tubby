@@ -6,10 +6,11 @@ export class TubbyVideo extends Component {
 	@prop(Object) video: Video
 	@prop(Number, true) maxDescriptionLength: number = 100
 
-	private renderLinkHtml() {
+	render() {
 		const {video, maxDescriptionLength} = this
 		const coverThumb = video.thumbs.medium
-		return html`
+
+		const link = html`
 			<a class="link"
 				target="_blank"
 				href="${video.watchLink}"
@@ -24,15 +25,10 @@ export class TubbyVideo extends Component {
 					</div>
 			</a>
 		`
-	}
 
-	private renderBlankSlate() {
-		return html`<p>--</p>`
-	}
+		const blank = html`<p>--</p>`
 
-	render() {
-		const {video} = this
-		return html`
+		const style = html`
 			<style>
 				* {
 					margin: 0;
@@ -83,6 +79,10 @@ export class TubbyVideo extends Component {
 					display: block;
 				}
 			</style>
-			${!!video ? this.renderLinkHtml() : this.renderBlankSlate()}`
+		`
+
+		return html`
+			${style}
+			${video ? link : blank}`
 	}
 }

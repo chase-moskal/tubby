@@ -12,8 +12,8 @@ const {err} = TubbyError
 const _load = Symbol("_load")
 const _videos = Symbol("_videos")
 const _status = Symbol("_status")
-const _statusToReady = Symbol("_dispatchReady")
-const _statusToError = Symbol("_dispatchError")
+const _statusToReady = Symbol("_statusToReady")
+const _statusToError = Symbol("_statusToError")
 const _searchedVideos = Symbol("_searchedVideos")
 const _updateSearchedVideos = Symbol("_updateSearchedVideos")
 
@@ -25,6 +25,7 @@ export class TubbyYoutubeExplorer extends Component {
 	@prop(String) ["channel-id"]: string
 	@prop(String) ["playlist-id"]: string
 	@prop(Function) onError: (error: Error) => void
+	@prop(Number, true) maxDescriptionLength: number = 100
 
 	@prop(Array) private [_videos]: Video[] = []
 	@prop(Array) private [_searchedVideos]: Video[] = []
@@ -58,9 +59,10 @@ export class TubbyYoutubeExplorer extends Component {
 
 	render() {
 		const videos = this[_videos]
+		const status = this[_status]
+		const {maxDescriptionLength} = this
 		const searchedVideos = this[_searchedVideos]
 		const handleSearchUpdate = () => this[_updateSearchedVideos]()
-		const status = this[_status]
 
 		const styles = html`
 			<style>
@@ -88,7 +90,11 @@ export class TubbyYoutubeExplorer extends Component {
 		const ready = html`
 			<div class="latest">
 				${videos.length > 0
-					? html`<tubby-video .video="${videos[0]}"></tubby-video>`
+					? html`
+						<tubby-video
+							.video="${videos[0]}"
+							maxDescriptionLength="${maxDescriptionLength}">
+						</tubby-video>`
 					: null}
 			</div>
 
@@ -104,7 +110,10 @@ export class TubbyYoutubeExplorer extends Component {
 
 			<div class="grid">
 				${searchedVideos.map(video => html`
-					<tubby-video .video="${video}"></tubby-video>
+					<tubby-video
+						.video="${video}"
+						maxDescriptionLength="${maxDescriptionLength}">
+					</tubby-video>
 				`)}
 			</div>
 		`
