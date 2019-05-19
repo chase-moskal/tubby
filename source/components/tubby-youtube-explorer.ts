@@ -24,6 +24,7 @@ export class TubbyYoutubeExplorer extends Component {
 	@prop(Function) onReady: () => void
 	@prop(String) ["channel-id"]: string
 	@prop(String) ["playlist-id"]: string
+	@prop(Boolean, true) search: boolean = false
 	@prop(Function) onError: (error: Error) => void
 	@prop(Number, true) maxDescriptionLength: number = 100
 
@@ -43,7 +44,7 @@ export class TubbyYoutubeExplorer extends Component {
 	}
 
 	get videos(): Video[] {
-		return this[_videos]
+		return [...this[_videos]]
 	}
 
 	firstUpdated() {
@@ -52,7 +53,7 @@ export class TubbyYoutubeExplorer extends Component {
 
 	updated(changedProperties: Map<any, any>) {
 		super.updated(changedProperties)
-		if (changedProperties.has(_videos)) {
+		if (changedProperties.has(_videos) || changedProperties.has("search")) {
 			this[_updateSearchedVideos]()
 		}
 	}
@@ -60,7 +61,7 @@ export class TubbyYoutubeExplorer extends Component {
 	render() {
 		const videos = this[_videos]
 		const status = this[_status]
-		const {maxDescriptionLength} = this
+		const {search, maxDescriptionLength} = this
 		const searchedVideos = this[_searchedVideos]
 		const handleSearchUpdate = () => this[_updateSearchedVideos]()
 
@@ -73,8 +74,73 @@ export class TubbyYoutubeExplorer extends Component {
 				}
 
 				:host {
+					display: block;
+					margin: 1em auto;
+					min-height: 800px;
+					padding-bottom: 400px;
+				}
+
+				.info {
+					margin-top: 0.2em;
+					opacity: 0.6;
+					text-align: right;
+				}
+
+				.info > * {
+					display: inline-block;
+				}
+
+				.results {
+					padding: 0.05em 0.2em;
+					border-radius: 3px;
+					background: rgba(255,255,255, 0);
+					transition: background 400ms linear;
+				}
+
+				.results[data-blink="true"] {
+					background: rgba(255,255,255, 0.5);
+					transition: none;
+				}
+
+				.grid {
+					display: flex;
+					flex-wrap: wrap;
+					justify-content: space-evenly;
+					width: 100%;
+					margin: 1em auto;
+					padding: 0.5em;
+					list-style: none;
+					background: rgba(0,0,0, 0.1);
+				}
+
+				.grid * + p {
+					margin-top: 0.5em;
+				}
+
+				.grid > li {
 					position: relative;
-					min-height: 4em;
+					flex: 1 1 0;
+					min-width: 350px;
+					max-width: 640px;
+					min-height: 160px;
+					margin: 0.5em;
+				}
+
+				@media (max-width: 400px) {
+					.grid, .grid > li {
+						display: block;
+						width: 100%;
+						min-width: unset;
+						max-width: unset;
+						list-style: none;
+						margin-left: 0;
+						margin-right: 0;
+						padding-left: 0;
+						padding-right: 0;
+					}
+					.grid > li {
+						margin-bottom: 0.5em;
+					}
 				}
 			</style>
 		`
@@ -98,15 +164,17 @@ export class TubbyYoutubeExplorer extends Component {
 					: null}
 			</div>
 
-			<div class="search">
-				<tubby-search @searchUpdate=${handleSearchUpdate}></tubby-search>
-			</div>
+			${search ? html`
+				<div class="search">
+					<tubby-search @searchUpdate=${handleSearchUpdate}></tubby-search>
+				</div>
 
-			<div class="info">
-				<p class="number-of-results">
-					${searchedVideos.length} result${searchedVideos.length === 1 ? "" : "s"}
-				</p>
-			</div>
+				<div class="info">
+					<p class="results">
+						${searchedVideos.length} result${searchedVideos.length === 1 ? "" : "s"}
+					</p>
+				</div>
+			` : null}
 
 			<div class="grid">
 				${searchedVideos.map(video => html`
@@ -158,16 +226,17 @@ export class TubbyYoutubeExplorer extends Component {
 	}
 
 	private [_updateSearchedVideos]() {
-		const search: TubbySearch = this.shadowRoot.querySelector("tubby-search")
-		if (!search) return
-		this[_searchedVideos] = this[_videos].filter(
-			video => search.match([
-				video.title,
-				video.description,
-				`#${video.numeral}`,
-				video.videoId
-			].join(" "))
-		)
+		const searchElement: TubbySearch = this.shadowRoot.querySelector("tubby-search")
+		this[_searchedVideos] = searchElement
+			? this[_videos].filter(
+				video => searchElement.match([
+					video.title,
+					video.description,
+					`#${video.numeral}`,
+					video.videoId
+				].join(" "))
+			)
+			: this.videos
 	}
 
 	private [_statusToReady]() {

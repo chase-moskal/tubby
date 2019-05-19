@@ -5,4 +5,56 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+	--focus-outline: 3px solid lime;
+}
+
+*:focus {
+	outline: var(--focus-outline);
+}
+
+html {
+	font-family: Neuton, sans-serif;
+	font-size: 22px;
+	color: #eee;
+	background: #3d4c63;
+	background: linear-gradient(
+		to bottom right,
+		mix(#3d4c63, white, 70%),
+		#3d4c63 60%
+	) fixed;
+}
+
+a {
+	opacity: 0.9;
+	color: #0af;
+	text-decoration: none;
+}
+
+a:visited {
+	color: #28a;
+}
+
+a:hover, a:focus {
+	opacity: 1;
+	text-decoration: underline;
+}
+
+a:active {
+	color: #2ef;
+}
+
+body {
+	padding: 2em 4em;
+}
+
+body > * + * {
+	margin-top: 2em;
+}
+
+main * + * {
+	margin-top: 0.5em;
+}
+
+main ol, main ul {
+	padding-left: 2em;
 }

@@ -35,6 +35,7 @@ export class TubbyVideo extends Component {
 					padding: 0;
 					box-sizing: border-box;
 				}
+
 				.link {
 					z-index: 1;
 					position: relative;
@@ -50,9 +51,11 @@ export class TubbyVideo extends Component {
 					background-position: center center;
 					color: white;
 				}
+
 				.link:hover, .link:focus {
 					outline-color: red;
 				}
+
 				.link::before {
 					content: "";
 					display: block;
@@ -66,15 +69,19 @@ export class TubbyVideo extends Component {
 						rgba(25,25,25, 0.1)
 					);
 				}
+
 				.link > div {
 					line-height: 1.1em;
 				}
+
 				.title {
 					margin: 0.5em 0;
 				}
+
 				.title .text {
 					font-weight: bold;
 				}
+
 				.title .numeral {
 					display: block;
 				}

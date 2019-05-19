@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="source/demo.css"/>
 </head>
 <body>
-	<header class="siteheader slice">
+	<header>
 		<h1>
 			<strong>tubby</strong>
 			<span>— youtube channel instant search</span>
@@ -19,10 +19,9 @@
 			<p>by <a href="https://chasemoskal.com">chase moskal</a></p>
 		</div>
 	</header>
-
-	<main class="slice">
-		<section class="textcontent">
-			<h2>tubby is some frontend tech for web developers</h2>
+	<main>
+		<section>
+			<h2>tubby is an open source web component to display youtube playlists</h2>
 			<ul>
 				<li>tubby is a user interface for instant-searching (as-you-type) through a youtube channel's whole public catalog of videos</li>
 				<li>tubby is free and open source <a href="https://github.com/chase-moskal/tubby">on github</a></li>
@@ -30,14 +29,17 @@
 		</section>
 		<section>
 			<h2>demo featuring <a href="https://www.youtube.com/user/JordanPetersonVideos">jordan b peterson's youtube channel</a></h2>
-
-			<tubby-youtube-explorer
-				api-key="AIzaSyDeHpB9W14feQs8myoWgFAZOCrDeKMLRwE"
-				playlist-id="UUL_f53ZEJxp8TtlOkHwMV9Q"
-				canned="dist-demo/canned-videos.json">
-			</tubby-youtube-explorer>
 		</section>
 	</main>
+	<!--
+	---- TUBBY YOUTUBE EXPLORER
+	---->
+	<tubby-youtube-explorer
+		search
+		api-key="AIzaSyDeHpB9W14feQs8myoWgFAZOCrDeKMLRwE"
+		playlist-id="UUL_f53ZEJxp8TtlOkHwMV9Q"
+		canned="dist-demo/canned-videos.json">
+	</tubby-youtube-explorer>
 
 	<script type="importmap-shim" src="dist-demo/importmap.json"></script>
 	<script type="module-shim" src="dist/demo.js"></script>

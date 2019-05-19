@@ -43,6 +43,21 @@ export class TubbySearch extends Component {
 					padding: 0;
 					box-sizing: border-box;
 				}
+
+				input {
+					display: block;
+					font-size: 1.5em;
+					margin: 0 auto;
+					padding: 0.6em 1.2em;
+					width: 100%;
+					border: none;
+					background: white;
+					color: darkslategrey;
+				}
+
+				input:focus {
+					outline: var(--focus-outline, 2px solid #0ef);
+				}
 			</style>
 			<div class="searchbar">
 				<input
