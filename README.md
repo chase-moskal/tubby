@@ -20,8 +20,8 @@
       <script type="importmap-shim">
         {
           "imports": {
-            "lit-html/": "https://unpkg.com/lit-html@1.0.0/",
-            "lit-html": "https://unpkg.com/lit-html@1.0.0/lit-html.js",
+            "lit-html/": "https://unpkg.com/lit-html@1.1.0/",
+            "lit-html": "https://unpkg.com/lit-html@1.1.0/lit-html.js",
             "lit-element/": "https://unpkg.com/lit-element@2.1.0/",
             "lit-element": "https://unpkg.com/lit-element@2.1.0/lit-element.js",
             "tubby/": "https://unpkg.com/tubby@0.3.0-dev.3/",
