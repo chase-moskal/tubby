@@ -164,6 +164,7 @@ export class TubbyYoutubeExplorer extends Component {
 					min-width: 350px;
 					max-width: 640px;
 					margin: 0.5em;
+					color: var(--tubby-video-color, white);
 				}
 
 				@media (max-width: 400px) {

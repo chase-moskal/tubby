@@ -51,6 +51,7 @@ body > * + * {
 
 body > header h1 {
 	font-size: 3em;
+	line-height: 0.8em;
 }
 
 body > header h1 span {
@@ -67,7 +68,7 @@ main ol, main ul {
 	padding-left: 2em;
 }
 
-main > * + * {
+main > * + *, body > header > * + * {
 	margin-top: 1em;
 }
 
@@ -77,4 +78,9 @@ tubby-youtube-explorer {
 	--tubby-pending-bg: rgba(0,0,0, 0.2);
 	--tubby-error-bg: rgba(128,0,0, 0.2);
 	--tubby-grid-bg: rgba(0,0,0, 0.2);
+	--tubby-video-color: white;
+	--tubby-video-bg: linear-gradient(to bottom right,
+		rgba(25,25,25, 0.95) 32%,
+		rgba(25,25,25, 0.6)
+	);
 }

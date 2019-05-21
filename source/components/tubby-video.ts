@@ -36,7 +36,7 @@ export class TubbyVideo extends Component {
 					outline: 3px solid transparent;
 					background-size: cover;
 					background-position: center center;
-					color: white;
+					color: inherit;
 				}
 
 				.link:hover, .link:focus {
@@ -50,11 +50,11 @@ export class TubbyVideo extends Component {
 					position: absolute;
 					top: 0; left: 0;
 					width: 100%; height: 100%;
-					background: rgba(25,25,25, 0.7);
-					background: linear-gradient(to bottom right,
+					background: rgba(25,25,25, 0.8);
+					background: var(--tubby-video-bg, linear-gradient(to bottom right,
 						rgba(25,25,25, 0.95) 32%,
-						rgba(25,25,25, 0.1)
-					);
+						rgba(25,25,25, 0.6)
+					));
 				}
 
 				.link > div {

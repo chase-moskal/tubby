@@ -50,8 +50,8 @@ export class TubbySearch extends Component {
 					padding: 0.6em 1.2em;
 					width: 100%;
 					border: none;
-					background: white;
-					color: darkslategrey;
+					background: var(--tubby-search-bg, white);
+					color: var(--tubby-search-color, darkslategrey);
 				}
 
 				input:focus {
