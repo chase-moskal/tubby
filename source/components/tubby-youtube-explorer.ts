@@ -138,7 +138,7 @@ export class TubbyYoutubeExplorer extends Component {
 				}
 
 				.results[data-blink="true"] {
-					background: rgba(255,255,255, 0.5);
+					background: var(--tubby-results-blink-color, rgba(255,255,255, 0.5));
 					transition: none;
 				}
 
@@ -273,6 +273,11 @@ export class TubbyYoutubeExplorer extends Component {
 				].join(" "))
 			)
 			: this.videos
+		const results: HTMLParagraphElement = this.shadowRoot.querySelector(".results")
+		if (results) {
+			results.setAttribute("data-blink", "true");
+			setTimeout(() => results.removeAttribute("data-blink"), 0)
+		}
 	}
 
 	private [_statusToPending]() {
