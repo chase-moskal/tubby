@@ -24,8 +24,8 @@
             "lit-html": "https://unpkg.com/lit-html@1.1.0/lit-html.js",
             "lit-element/": "https://unpkg.com/lit-element@2.1.0/",
             "lit-element": "https://unpkg.com/lit-element@2.1.0/lit-element.js",
-            "tubby/": "https://unpkg.com/tubby@0.3.0-dev.3/",
-            "tubby": "https://unpkg.com/tubby@0.3.0-dev.3/dist/index.js"
+            "tubby/": "https://unpkg.com/tubby@0.3.0-dev.4/",
+            "tubby": "https://unpkg.com/tubby@0.3.0-dev.4/dist/index.js"
           }
         }
       </script>
