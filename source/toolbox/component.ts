@@ -1,7 +1,7 @@
 
-import {LitElement, html, css, property} from "lit-element"
+import {LitElement, html, css, property, svg} from "lit-element"
 
-export {LitElement, html, css, property}
+export {LitElement, html, css, property, svg}
 
 export class Component extends LitElement {}
 

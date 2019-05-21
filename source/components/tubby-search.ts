@@ -1,5 +1,5 @@
 
-import {Component, html, prop} from "../toolbox/component.js"
+import {Component, html, svg, prop} from "../toolbox/component.js"
 
 const _searchUpdate = Symbol("searchUpdate")
 const _getSearchTerms = Symbol("getSearchTerms")
@@ -43,6 +43,23 @@ export class TubbySearch extends Component {
 					box-sizing: border-box;
 				}
 
+				.searchbar {
+					position: relative;
+				}
+
+				.icon {
+					z-index: 1;
+					position: absolute;
+					pointer-events: none;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					width: 3em;
+					height: 60%;
+					margin: auto 0.5em;
+					fill: var(--tubby-search-icon-color, rgba(0,0,0, 0.5));
+				}
+
 				input {
 					display: block;
 					font-size: 1.5em;
@@ -66,6 +83,9 @@ export class TubbySearch extends Component {
 					@change="${this[_searchUpdate]}"
 					@keyup="${this[_searchUpdate]}"
 					/>
+				${svg`
+					<svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15.7 13.3l-3.81-3.83A5.93 5.93 0 0 0 13 6c0-3.31-2.69-6-6-6S1 2.69 1 6s2.69 6 6 6c1.3 0 2.48-.41 3.47-1.11l3.83 3.81c.19.2.45.3.7.3.25 0 .52-.09.7-.3a.996.996 0 0 0 0-1.41v.01zM7 10.7c-2.59 0-4.7-2.11-4.7-4.7 0-2.59 2.11-4.7 4.7-4.7 2.59 0 4.7 2.11 4.7 4.7 0 2.59-2.11 4.7-4.7 4.7z"/></svg>
+				`}
 			</div>
 		`
 	}

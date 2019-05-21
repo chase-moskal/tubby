@@ -94,6 +94,7 @@
         --tubby-error-bg: rgba(128,0,0, 0.2);
         --tubby-pending-color: white;
         --tubby-error-color: red;
+        --tubby-search-icon-color: rgba(0,0,0, 0.5);
         --tubby-grid-bg: rgba(0,0,0, 0.2);
         --tubby-video-color: white;
         --tubby-video-bg: linear-gradient(to bottom right,
