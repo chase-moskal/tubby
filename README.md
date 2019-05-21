@@ -1,10 +1,10 @@
 
-# `tubby` — youtube playlist display
+# `tubby` — youtube playlist search
 
-- [***⚡ demo: chasemoskal.com/tubby***](https://chasemoskal.com/tubby)
-- web components to display a youtube playlist
+- ⚡ [***demo: chasemoskal.com/tubby***](https://chasemoskal.com/tubby)
+- web component to display a youtube playlist with a search bar
 
-## understanding the `<tubby-youtube-explorer>` component
+## using the `<tubby-youtube-explorer>` component on your webpage
 
 1. **first, you need access to the youtube api, and have your api key ready**
 
@@ -14,8 +14,35 @@
 
 2. **install tubby on your page**
 
-    *(TODO: write these instructions)*  
-    similar instructions  for [carouse](https://github.com/chase-moskal/carouse#okay-so-thats-how-i-use-it-how-do-i-install-it), so check those out but adapt the url's to ones for `tubby`
+    - include the following snippet on your page
+
+      ```html
+      <script type="importmap-shim">
+        {
+          "imports": {
+            "lit-html/": "https://unpkg.com/lit-html@1.0.0/",
+            "lit-html": "https://unpkg.com/lit-html@1.0.0/lit-html.js",
+            "lit-element/": "https://unpkg.com/lit-element@2.1.0/",
+            "lit-element": "https://unpkg.com/lit-element@2.1.0/lit-element.js",
+            "tubby/": "https://unpkg.com/tubby@0.3.0-dev.3/",
+            "tubby": "https://unpkg.com/tubby@0.3.0-dev.3/dist/index.js"
+          }
+        }
+      </script>
+      <script type="module-shim">
+        import "tubby/dist/register-all.js"
+      </script>
+      <script src="https://unpkg.com/es-module-shims@0.2.3/dist/es-module-shims.js"></script>
+      ```
+
+      here's what's going on in this snippet
+
+      - **import maps**
+        - we provide an import map which locates `tubby` and its dependencies
+        - of course, for the import map, we're using guy bedford's awesome polyfill: [es-module-shims](https://github.com/guybedford/es-module-shims)
+        - if you're from the future, you won't need the `-shim`'s
+      - **register the web components**
+        - we run `import "tubby/dist/register-all.js"` to register the `<tubby-youtube-explorer>` component
 
 3. **place the explorer html on your page**
 
@@ -85,8 +112,6 @@
 
     ```html
     <style>
-      @import url("https://unpkg.com/tubby@0.3.0-dev.0/dist/style.css");
-
       tubby-video-explorer {
         --focus-outline: 2px solid #0ef;
         --tubby-search-focus-outline-offset: -4px;
@@ -108,4 +133,16 @@
 
 6. **canning videos with tubby's `tubby-download` commandline tool**
 
-    - (TODO: write these instructions)
+    you can give tubby a headstart (greatly reducing load times for large playlists), by using the `tubby-download` cli to generate a cache of "canned" videos in a json file, here's how
+
+    - `npm install tubby`  
+      *install tubby into your npm package*
+
+    - `tubby-download --api-key=AIzaSyDeHpB9W14feQs8myoWgFAZOCrDeKMLRwE --playlist-id=UUL_f53ZEJxp8TtlOkHwMV9Q > dist/canned-videos.json`  
+      *call the tubby binary in a package.json script, supply the api-key and playlist-id, and specify where tubby should write the canned videos json file*
+
+    - then you just provide the `[canned]` attribute like so: `<tubby-youtube-explorer canned="dist/canned-videos.json">`
+
+## tubby is open source and contributions are welcome!
+
+please consider opening an issue or contributing pull requests :)
