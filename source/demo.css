@@ -78,7 +78,7 @@ tubby-youtube-explorer {
 	--tubby-pending-bg: rgba(0,0,0, 0.2);
 	--tubby-error-bg: rgba(128,0,0, 0.2);
 	--tubby-pending-color: white;
-	--tubby-error-color: red;
+	--tubby-error-color: yellow;
 	--tubby-search-icon-color: rgba(0,0,0, 0.5);
 	--tubby-grid-bg: rgba(0,0,0, 0.2);
 	--tubby-video-color: white;
