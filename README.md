@@ -89,10 +89,15 @@
 
       tubby-video-explorer {
         --focus-outline: 2px solid #0ef;
-        --tubby-search-focus-outline-offset: 5px;
+        --tubby-search-focus-outline-offset: -4px;
         --tubby-pending-bg: rgba(0,0,0, 0.2);
         --tubby-error-bg: rgba(128,0,0, 0.2);
         --tubby-grid-bg: rgba(0,0,0, 0.2);
+        --tubby-video-color: white;
+        --tubby-video-bg: linear-gradient(to bottom right,
+          rgba(25,25,25, 0.95) 32%,
+          rgba(25,25,25, 0.6)
+        );
       }
     </style>
     ```
