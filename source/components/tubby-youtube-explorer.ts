@@ -95,10 +95,12 @@ export class TubbyYoutubeExplorer extends Component {
 
 				.pending {
 					background: var(--tubby-pending-bg, rgba(0,0,0, 0.2));
+					color: var(--tubby-pending-color, white);
 				}
 
 				.error {
 					background: var(--tubby-error-bg, rgba(128,0,0, 0.2));
+					color: var(--tubby-error-color, yellow);
 				}
 
 				.pending::before, .error::before {

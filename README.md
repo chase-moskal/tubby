@@ -92,6 +92,8 @@
         --tubby-search-focus-outline-offset: -4px;
         --tubby-pending-bg: rgba(0,0,0, 0.2);
         --tubby-error-bg: rgba(128,0,0, 0.2);
+        --tubby-pending-color: white;
+        --tubby-error-color: red;
         --tubby-grid-bg: rgba(0,0,0, 0.2);
         --tubby-video-color: white;
         --tubby-video-bg: linear-gradient(to bottom right,
