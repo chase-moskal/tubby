@@ -70,3 +70,11 @@ main ol, main ul {
 main > * + * {
 	margin-top: 1em;
 }
+
+tubby-youtube-explorer {
+	--focus-outline: 2px solid #0ef;
+	--tubby-search-focus-outline-offset: -4px;
+	--tubby-pending-bg: rgba(0,0,0, 0.2);
+	--tubby-error-bg: rgba(128,0,0, 0.2);
+	--tubby-grid-bg: rgba(0,0,0, 0.2);
+}

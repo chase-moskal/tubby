@@ -89,7 +89,10 @@
 
       tubby-video-explorer {
         --focus-outline: 2px solid #0ef;
-        /* (TODO: more custom properties) */
+        --tubby-search-focus-outline-offset: 5px;
+        --tubby-pending-bg: rgba(0,0,0, 0.2);
+        --tubby-error-bg: rgba(128,0,0, 0.2);
+        --tubby-grid-bg: rgba(0,0,0, 0.2);
       }
     </style>
     ```

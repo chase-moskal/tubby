@@ -56,6 +56,7 @@ export class TubbySearch extends Component {
 
 				input:focus {
 					outline: var(--focus-outline, 2px solid #0ef);
+					outline-offset: var(--tubby-search-focus-outline-offset, -3px);
 				}
 			</style>
 			<div class="searchbar">

@@ -85,20 +85,20 @@ export class TubbyYoutubeExplorer extends Component {
 
 				:host {
 					display: block;
-					margin: 1em auto;
-					min-height: 800px;
-					padding-bottom: 400px;
 				}
 
 				.pending, .error {
 					padding: 2em 1em;
 					position: relative;
 					text-align: center;
-					background: rgba(0,0,0, 0.2);
+				}
+
+				.pending {
+					background: var(--tubby-pending-bg, rgba(0,0,0, 0.2));
 				}
 
 				.error {
-					background: rgba(128,0,0, 0.2);
+					background: var(--tubby-error-bg, rgba(128,0,0, 0.2));
 				}
 
 				.pending::before, .error::before {
@@ -119,8 +119,6 @@ export class TubbyYoutubeExplorer extends Component {
 
 				.error::before {
 					background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="white" fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg>');
-					background-size: cover;
-					background-position: center center;
 				}
 
 				.info {
@@ -153,7 +151,7 @@ export class TubbyYoutubeExplorer extends Component {
 					margin: 1em auto;
 					padding: 0.5em;
 					list-style: none;
-					background: rgba(0,0,0, 0.1);
+					background: var(--tubby-grid-bg, rgba(0,0,0, 0.1));
 				}
 
 				.grid * + p {
