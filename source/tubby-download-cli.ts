@@ -16,7 +16,7 @@ async function main() {
 	if (!apiKey) throw new Error("--api-key required")
 	if (!playlistId) throw new Error("--playlist-id required")
 	const videos = await getPlaylistVideos({fetch, apiKey, playlistId})
-	process.stdout.write(JSON.stringify(videos))
+	process.stdout.write(JSON.stringify(videos, null, "\t"))
 }
 
 dieOnError()

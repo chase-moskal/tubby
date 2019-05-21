@@ -13,18 +13,18 @@ export async function getPlaylistVideos(opts: GetPlaylistVideosOptions): Promise
 	const {
 		playlistId,
 		data: moreData,
-		onVideosReceived,
-		paginationLimit = 50,
 		cannedVideos = [],
+		paginationLimit = 50,
+		onVideosReceived = () => {},
 		...options
 	} = opts
 
 	let count = 0
-	let allVideos: Video[] = cannedVideos
+	let videos: Video[] = [...cannedVideos]
 	let nextPageToken: string
 	let go: boolean = true
 
-	if (onVideosReceived && allVideos.length) onVideosReceived(allVideos)
+	if (videos.length) onVideosReceived(videos)
 
 	// loop over every page to receive all results
 	while (go) {
@@ -65,18 +65,16 @@ export async function getPlaylistVideos(opts: GetPlaylistVideosOptions): Promise
 		// find all fresh videos which arent canned
 		let canOpened = false
 		const freshVideos = newVideos.filter(video => {
-			const match = allVideos.find(v => v.videoId === video.videoId)
-			if (match) {
-				canOpened = true
-			}
+			const match = videos.find(v => v.videoId === video.videoId)
+			if (match) canOpened = true
 			return !match
 		})
 
 		// fire realtime 'onVideosReceived' callback
-		if (onVideosReceived) onVideosReceived(freshVideos)
+		onVideosReceived(freshVideos)
 
 		// add to videos list
-		allVideos = [...allVideos, ...freshVideos]
+		videos = [...videos, ...freshVideos]
 
 		// queue up the next page of video results
 		nextPageToken = response.nextPageToken
@@ -86,5 +84,5 @@ export async function getPlaylistVideos(opts: GetPlaylistVideosOptions): Promise
 	}
 
 	// return all of the gathered videos
-	return allVideos
+	return videos.sort((a: Video, b: Video) => a.numeral > b.numeral ? -1 : 1)
 }
