@@ -2,7 +2,7 @@
 import {TubbyError} from "../tubby-error.js"
 import {Video, ThumbSize} from "../interfaces.js"
 import {getUploads} from "../youtube/get-uploads.js"
-import {Component, html, svg, prop} from "../toolbox/component.js"
+import {Component, html, css, svg, prop} from "../toolbox/component.js"
 import {getPlaylistVideos} from "../youtube/get-playlist-videos.js"
 
 import {TubbySearch} from "./tubby-search.js"
@@ -60,131 +60,129 @@ export class TubbyYoutubeExplorer extends Component {
 		}
 	}
 
+	static get styles() {return css`
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		@keyframes rotation {
+			from {
+				transform: rotate(0deg);
+			}
+			to {
+				transform: rotate(899deg);
+			}
+		}
+
+		:host {
+			display: block;
+		}
+
+		.pending, .error {
+			padding: 2em 1em;
+			position: relative;
+			text-align: center;
+		}
+
+		.pending > svg, .error > svg {
+			display: inline-block;
+			width: 32px;
+			height: 32px;
+			vertical-align: middle;
+			margin-right: 0.5em;
+		}
+
+		.pending {
+			background: var(--tubby-pending-bg, rgba(0,0,0, 0.2));
+			color: var(--tubby-pending-color, white);
+		}
+
+		.pending > svg {
+			animation: rotation 8s infinite linear;
+			fill: var(--tubby-pending-color, white);
+		}
+
+		.error {
+			background: var(--tubby-error-bg, rgba(128,0,0, 0.2));
+			color: var(--tubby-error-color, yellow);
+		}
+
+		.error > svg {
+			fill: var(--tubby-error-color, yellow);
+		}
+
+		.info {
+			margin-top: 0.2em;
+			opacity: 0.6;
+			text-align: right;
+		}
+
+		.info > * {
+			display: inline-block;
+		}
+
+		.results {
+			padding: 0.05em 0.2em;
+			border-radius: 3px;
+			background: rgba(255,255,255, 0);
+			transition: background 400ms linear;
+		}
+
+		.results[data-blink="true"] {
+			background: var(--tubby-results-blink-color, rgba(255,255,255, 0.5));
+			transition: none;
+		}
+
+		.grid {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-evenly;
+			width: 100%;
+			margin: 1em auto;
+			padding: 0.5em;
+			list-style: none;
+			background: var(--tubby-grid-bg, rgba(0,0,0, 0.1));
+		}
+
+		.grid * + p {
+			margin-top: 0.5em;
+		}
+
+		tubby-video {
+			position: relative;
+			flex: 1 1 0;
+			min-width: 350px;
+			max-width: 640px;
+			margin: 0.5em;
+			color: var(--tubby-video-color, white);
+		}
+
+		@media (max-width: 400px) {
+			.grid, tubby-video {
+				display: block;
+				width: 100%;
+				min-width: unset;
+				max-width: unset;
+				list-style: none;
+				margin-left: 0;
+				margin-right: 0;
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			tubby-video {
+				margin-bottom: 0.5em;
+			}
+		}
+	`}
+
 	render() {
 		const {search} = this
 		const status = this[_status]
 		const searchedVideos = this[_searchedVideos]
 		const handleSearchUpdate = () => this[_updateSearchedVideos]()
-
-		const styles = html`
-			<style>
-				* {
-					margin: 0;
-					padding: 0;
-					box-sizing: border-box;
-				}
-
-				@keyframes rotation {
-					from {
-						transform: rotate(0deg);
-					}
-					to {
-						transform: rotate(899deg);
-					}
-				}
-
-				:host {
-					display: block;
-				}
-
-				.pending, .error {
-					padding: 2em 1em;
-					position: relative;
-					text-align: center;
-				}
-
-				.pending > svg, .error > svg {
-					display: inline-block;
-					width: 32px;
-					height: 32px;
-					vertical-align: middle;
-					margin-right: 0.5em;
-				}
-
-				.pending {
-					background: var(--tubby-pending-bg, rgba(0,0,0, 0.2));
-					color: var(--tubby-pending-color, white);
-				}
-
-				.pending > svg {
-					animation: rotation 8s infinite linear;
-					fill: var(--tubby-pending-color, white);
-				}
-
-				.error {
-					background: var(--tubby-error-bg, rgba(128,0,0, 0.2));
-					color: var(--tubby-error-color, yellow);
-				}
-
-				.error > svg {
-					fill: var(--tubby-error-color, yellow);
-				}
-
-				.info {
-					margin-top: 0.2em;
-					opacity: 0.6;
-					text-align: right;
-				}
-
-				.info > * {
-					display: inline-block;
-				}
-
-				.results {
-					padding: 0.05em 0.2em;
-					border-radius: 3px;
-					background: rgba(255,255,255, 0);
-					transition: background 400ms linear;
-				}
-
-				.results[data-blink="true"] {
-					background: var(--tubby-results-blink-color, rgba(255,255,255, 0.5));
-					transition: none;
-				}
-
-				.grid {
-					display: flex;
-					flex-wrap: wrap;
-					justify-content: space-evenly;
-					width: 100%;
-					margin: 1em auto;
-					padding: 0.5em;
-					list-style: none;
-					background: var(--tubby-grid-bg, rgba(0,0,0, 0.1));
-				}
-
-				.grid * + p {
-					margin-top: 0.5em;
-				}
-
-				tubby-video {
-					position: relative;
-					flex: 1 1 0;
-					min-width: 350px;
-					max-width: 640px;
-					margin: 0.5em;
-					color: var(--tubby-video-color, white);
-				}
-
-				@media (max-width: 400px) {
-					.grid, tubby-video {
-						display: block;
-						width: 100%;
-						min-width: unset;
-						max-width: unset;
-						list-style: none;
-						margin-left: 0;
-						margin-right: 0;
-						padding-left: 0;
-						padding-right: 0;
-					}
-
-					tubby-video {
-						margin-bottom: 0.5em;
-					}
-				}
-			</style>
-		`
 
 		const pending = html`
 			<div class="pending">
@@ -225,7 +223,6 @@ export class TubbyYoutubeExplorer extends Component {
 		`
 
 		return html`
-			${styles}
 			${({pending, error, ready})[status]}
 		`
 	}

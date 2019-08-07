@@ -1,5 +1,5 @@
 
-import {Component, html, svg, prop} from "../toolbox/component.js"
+import {Component, html, css, svg, prop} from "../toolbox/component.js"
 
 const _searchUpdate = Symbol("searchUpdate")
 const _getSearchTerms = Symbol("getSearchTerms")
@@ -34,48 +34,49 @@ export class TubbySearch extends Component {
 		return true
 	}
 
+	static get styles() {return css`
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.searchbar {
+			position: relative;
+		}
+
+		.icon {
+			z-index: 1;
+			position: absolute;
+			pointer-events: none;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: 3em;
+			height: 60%;
+			margin: auto 0.5em;
+			fill: var(--tubby-search-icon-color, rgba(0,0,0, 0.5));
+		}
+
+		input {
+			display: block;
+			font-size: 1.5em;
+			margin: 0 auto;
+			padding: 0.6em 1.2em;
+			width: 100%;
+			border: none;
+			background: var(--tubby-search-bg, white);
+			color: var(--tubby-search-color, darkslategrey);
+		}
+
+		input:focus {
+			outline: var(--focus-outline, 2px solid #0ef);
+			outline-offset: var(--tubby-search-focus-outline-offset, -3px);
+		}
+	`}
+
 	render() {
 		return html`
-			<style>
-				* {
-					margin: 0;
-					padding: 0;
-					box-sizing: border-box;
-				}
-
-				.searchbar {
-					position: relative;
-				}
-
-				.icon {
-					z-index: 1;
-					position: absolute;
-					pointer-events: none;
-					top: 0;
-					right: 0;
-					bottom: 0;
-					width: 3em;
-					height: 60%;
-					margin: auto 0.5em;
-					fill: var(--tubby-search-icon-color, rgba(0,0,0, 0.5));
-				}
-
-				input {
-					display: block;
-					font-size: 1.5em;
-					margin: 0 auto;
-					padding: 0.6em 1.2em;
-					width: 100%;
-					border: none;
-					background: var(--tubby-search-bg, white);
-					color: var(--tubby-search-color, darkslategrey);
-				}
-
-				input:focus {
-					outline: var(--focus-outline, 2px solid #0ef);
-					outline-offset: var(--tubby-search-focus-outline-offset, -3px);
-				}
-			</style>
 			<div class="searchbar">
 				<input
 					type="text"
