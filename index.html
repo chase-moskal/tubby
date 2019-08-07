@@ -25,9 +25,6 @@
 		</section>
 	</main>
 
-	<!--
-	---- TUBBY YOUTUBE EXPLORER
-	---->
 	<tubby-youtube-explorer
 		search
 		thumb-size="small"
@@ -37,8 +34,11 @@
 		canned="dist-demo/canned-videos.json">
 	</tubby-youtube-explorer>
 
-	<script type="importmap-shim" src="dist-demo/importmap.json"></script>
-	<script type="module-shim" src="dist/demo.js"></script>
-	<script src="https://unpkg.com/es-module-shims@0.2.3/dist/es-module-shims.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@babel/polyfill@7.4.4/dist/polyfill.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2.2.10/webcomponents-bundle.js"></script>
+	<script type="importmap-shim" src="/dist-demo/importmap.json"></script>
+	<script type="module-shim" src="/dist/demo.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.15/dist/es-module-shims.js"></script>
 </body>
 </html>
