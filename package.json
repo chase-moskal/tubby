@@ -1,6 +1,6 @@
 {
 	"name": "tubby",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "youtube channel instant search",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"license": "ISC",
@@ -36,14 +36,14 @@
 		"test": "exit 0"
 	},
 	"dependencies": {
-		"commander": "2.20.0",
+		"commander": "^3.0.0",
 		"die-on-error": "0.0.0-dev.0",
 		"lit-element": "^2.2.1",
 		"lit-html": "^1.1.1",
 		"node-fetch": "^2.6.0"
 	},
 	"devDependencies": {
-		"@types/node": "^12.7.0",
+		"@types/node": "^12.7.1",
 		"barrelsby": "^2.1.1",
 		"importly": "0.1.0-dev.0",
 		"mkdirp": "^0.5.1",
