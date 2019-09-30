@@ -4,7 +4,6 @@
 	"description": "youtube channel instant search",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"license": "ISC",
-	"type": "module",
 	"main": "dist-cjs/index.js",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -36,22 +35,22 @@
 		"test": "exit 0"
 	},
 	"dependencies": {
-		"commander": "^3.0.0",
+		"commander": "^3.0.2",
 		"die-on-error": "0.0.0-dev.0",
 		"lit-element": "^2.2.1",
-		"lit-html": "^1.1.1",
+		"lit-html": "^1.1.2",
 		"node-fetch": "^2.6.0"
 	},
 	"devDependencies": {
-		"@types/node": "^12.7.1",
+		"@types/node": "^12.7.8",
 		"barrelsby": "^2.1.1",
 		"importly": "0.1.0-dev.0",
 		"mkdirp": "^0.5.1",
 		"npm-run-all": "^4.1.5",
 		"octicons": "^8.5.0",
-		"replace": "^1.1.0",
-		"rimraf": "^2.6.3",
-		"serve": "^11.1.0",
-		"typescript": "^3.5.3"
+		"replace": "^1.1.1",
+		"rimraf": "^3.0.0",
+		"serve": "^11.2.0",
+		"typescript": "^3.6.3"
 	}
 }
