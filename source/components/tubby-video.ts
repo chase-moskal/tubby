@@ -91,8 +91,8 @@ export class TubbyVideo extends Component {
 				style="background-image: url('${coverThumb}')">
 					<div class="title">
 						<span class="text">${this.video.title}</span>
-						<span class="numeral">${this.video.numeral}</span>
-						
+						<!-- TODO: numeral is disabled because it was found inaccurate -->
+						<!-- <span class="numeral">${this.video.numeral}</span> -->
 					</div>
 					<div class="description">
 						${this.video.description.substring(0, this["max-description-length"]) + "..."}
